@@ -6,38 +6,54 @@ export default function Landing() {
   const { user } = useAuth();
   if (user) return <Navigate to={homeFor(user.role)} replace />;
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-brand-600 text-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-          <span className="text-lg font-semibold">StreetPulse</span>
-          <Link to="/login" className="text-sm hover:underline">Sign in</Link>
+    <div className="landing-page">
+      <header className="landing-header">
+        <div className="landing-container landing-nav">
+          <Link to="/" className="landing-brand">StreetPulse<span className="landing-brand-dot" /></Link>
+          <nav aria-label="Main navigation">
+            <a className="landing-process-link" href="#process">The process</a>
+            <Link to="/login">Sign in</Link>
+          </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-12">
-        <h1 className="max-w-2xl text-3xl font-semibold text-gray-900">Report road and street problems, and see them fixed.</h1>
-        <p className="mt-3 max-w-2xl text-gray-600">
-          Report a pothole, broken footpath or waterlogging with a photo. Each issue keeps a full photo history from first report to repair,
-          so you can check whether the work was actually done.
-        </p>
-        <div className="mt-6 flex gap-3">
-          <Link to="/login?register=1" className="btn btn-primary">Create an account</Link>
-          <Link to="/login" className="btn btn-ghost">Sign in</Link>
-        </div>
-
-        <h2 className="mt-14 border-b border-gray-300 pb-2 text-lg font-semibold">How it works</h2>
-        <ol className="mt-4 grid gap-6 sm:grid-cols-3">
+      <main>
+        <section className="landing-intro" aria-labelledby="landing-title">
+          <img className="landing-photo" src="https://upload.wikimedia.org/wikipedia/commons/3/36/Potholes_in_Bengaluru_road.jpg" alt="Damaged road surface in Bengaluru" />
+          <div className="landing-photo-shade" />
+          <div className="landing-container landing-intro-content">
+            <p className="landing-eyebrow">Bengaluru / Civic issue reporting</p>
+            <h1 id="landing-title">StreetPulse</h1>
+            <p className="landing-lead">Report the damage.<br />Follow the repair.</p>
+            <p className="landing-description">Potholes, waterlogging, broken footpaths. One place for your report and the photo record of what happens next.</p>
+            <div className="landing-actions">
+              <Link to="/login?register=1" className="landing-primary">Report an issue</Link>
+              <Link to="/login" className="landing-secondary">Track my reports</Link>
+            </div>
+            <p className="landing-location">Bengaluru, Karnataka</p>
+          </div>
+          <a className="landing-photo-credit" href="https://commons.wikimedia.org/wiki/File:Potholes_in_Bengaluru_road.jpg" target="_blank" rel="noreferrer">Photo: Mallikarjunasj / CC0</a>
+        </section>
+        <section id="process" className="landing-container landing-process">
+          <div className="landing-section-heading"><h2>From report to repair.</h2><span>A record at every step</span></div>
+          <ol className="landing-steps">
           {[
-            ["1. Report", "Take a photo or video and share your location. Reports about the same problem nearby are combined into one incident."],
-            ["2. Repair", "The issue is assigned to a municipal team, who upload before, during and after photos as the work progresses."],
-            ["3. Confirm", "After the repair is checked, you confirm whether the road actually looks fixed before the issue is closed."],
-          ].map(([t, d]) => (
-            <li key={t}>
-              <h3 className="font-semibold text-gray-900">{t}</h3>
-              <p className="mt-1 text-sm text-gray-600">{d}</p>
+            ["01", "Report the issue", "A photo and a location give your report a place on the map."],
+            ["02", "Follow the work", "Assigned teams add progress updates and repair evidence."],
+            ["03", "Check the outcome", "Review the repair. Disputed or uncertain results go to an administrator."],
+          ].map(([number, title, description]) => (
+            <li key={number}>
+              <span className="landing-step-number">{number}</span>
+              <h3>{title}</h3>
+              <p>{description}</p>
             </li>
           ))}
-        </ol>
+          </ol>
+        </section>
       </main>
+      <footer className="landing-container landing-footer">
+        <span>StreetPulse <span className="landing-footer-city">/ Bengaluru</span></span>
+        <nav aria-label="Legal"><Link to="/privacy">Privacy policy</Link><Link to="/terms">Terms &amp; conditions</Link></nav>
+      </footer>
     </div>
   );
 }
