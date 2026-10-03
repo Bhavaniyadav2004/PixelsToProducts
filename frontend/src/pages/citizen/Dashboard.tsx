@@ -36,9 +36,9 @@ export default function CitizenDashboard() {
     <>
       <section className="hero mb-5 flex flex-wrap items-center justify-between gap-4 px-6 py-8 sm:px-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-blue-200">Citizen portal</p>
+          <p className="text-sm text-white/70">Citizen portal</p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">Hello, {user?.name}</h1>
-          <p className="mt-2 max-w-xl text-sm text-slate-300">Report road and street issues, follow each repair through its timeline, and confirm when the work is done.</p>
+          <p className="mt-2 max-w-xl text-sm text-white/80">Report road and street issues, follow each repair through its timeline, and confirm when the work is done.</p>
         </div>
         <Link to="/citizen/report" className="btn bg-white px-5 py-2.5 text-slate-900 hover:bg-slate-200">Report an issue</Link>
       </section>

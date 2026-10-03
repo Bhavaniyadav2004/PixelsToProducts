@@ -6,32 +6,38 @@ export default function Landing() {
   const { user } = useAuth();
   if (user) return <Navigate to={homeFor(user.role)} replace />;
   return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      <div className="mx-auto max-w-4xl px-6 py-24">
-        <h1 className="max-w-2xl text-4xl font-semibold tracking-tight">Report road problems in Bengaluru and see them get fixed</h1>
-        <p className="mt-4 max-w-2xl text-lg text-slate-300">Upload a photo of a pothole, waterlogged stretch or broken footpath. Reports at the same spot are grouped into one issue, assigned to a municipal team, and closed only after the repair is checked and you confirm it.</p>
-        <div className="mt-8 flex gap-3">
-          <Link to="/login" className="btn bg-white px-6 py-3 text-base text-slate-900 hover:bg-slate-200">Sign in</Link>
-          <Link to="/login?register=1" className="btn border border-slate-500 px-6 py-3 text-base text-white hover:bg-slate-800">Create citizen account</Link>
+    <div className="min-h-screen bg-white">
+      <header className="bg-brand-600 text-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+          <span className="text-lg font-semibold">StreetPulse</span>
+          <Link to="/login" className="text-sm hover:underline">Sign in</Link>
         </div>
-        <div className="mt-16 grid gap-4 sm:grid-cols-3">
+      </header>
+      <main className="mx-auto max-w-5xl px-4 py-12">
+        <h1 className="max-w-2xl text-3xl font-semibold text-gray-900">Report road and street problems, and see them fixed.</h1>
+        <p className="mt-3 max-w-2xl text-gray-600">
+          Report a pothole, broken footpath or waterlogging with a photo. Each issue keeps a full photo history from first report to repair,
+          so you can check whether the work was actually done.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Link to="/login?register=1" className="btn btn-primary">Create an account</Link>
+          <Link to="/login" className="btn btn-ghost">Sign in</Link>
+        </div>
+
+        <h2 className="mt-14 border-b border-gray-300 pb-2 text-lg font-semibold">How it works</h2>
+        <ol className="mt-4 grid gap-6 sm:grid-cols-3">
           {[
-            ["Citizens", "Capture a photo or video, get AI-assisted classification, track the repair, and confirm it actually worked."],
-            ["Municipal teams", "Work orders with evidence, priority reasons and a simple repair workflow with before/during/after uploads."],
-            ["Admins", "City-wide map, explainable priority queue, assignment, verification review and analytics."],
+            ["1. Report", "Take a photo or video and share your location. Reports about the same problem nearby are combined into one incident."],
+            ["2. Repair", "The issue is assigned to a municipal team, who upload before, during and after photos as the work progresses."],
+            ["3. Confirm", "After the repair is checked, you confirm whether the road actually looks fixed before the issue is closed."],
           ].map(([t, d]) => (
-            <div key={t} className="rounded-md border border-slate-700 p-5">
-              <h3 className="font-semibold">{t}</h3>
-              <p className="mt-2 text-sm text-slate-400">{d}</p>
-            </div>
+            <li key={t}>
+              <h3 className="font-semibold text-gray-900">{t}</h3>
+              <p className="mt-1 text-sm text-gray-600">{d}</p>
+            </li>
           ))}
-        </div>
-        <footer className="mt-20 border-t border-slate-700 pt-4 text-xs text-slate-400">
-          <Link className="hover:underline" to="/privacy">Privacy policy</Link>
-          <span className="mx-2">|</span>
-          <Link className="hover:underline" to="/terms">Terms and conditions</Link>
-        </footer>
-      </div>
+        </ol>
+      </main>
     </div>
   );
 }

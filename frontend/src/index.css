@@ -1,27 +1,32 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-@theme { --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+@theme {
+  --font-sans: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --color-brand-50: #eef1f5;
+  --color-brand-600: #0f2338;
+  --color-brand-700: #0a1a2b;
 
-body { @apply bg-slate-100 text-slate-800 antialiased; }
-.btn { @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed; }
-.btn-primary { @apply bg-blue-800 text-white hover:bg-blue-900; }
-.btn-green { @apply bg-emerald-600 text-white hover:bg-emerald-700; }
-.btn-red { @apply bg-rose-600 text-white hover:bg-rose-700; }
-.btn-ghost { @apply border border-slate-300 bg-white text-slate-700 hover:bg-slate-100; }
-.card { @apply rounded-md border border-slate-200 bg-white p-5; }
-.input { @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-700; }
-.label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500; }
-.leaflet-container { @apply rounded-md border border-slate-200; }
+  --color-indigo-50: #eef1f5; --color-indigo-100: #dde3ea; --color-indigo-200: #bcc7d4;
+  --color-indigo-500: #2a4560; --color-indigo-600: #0f2338; --color-indigo-700: #0a1a2b; --color-indigo-800: #07121e;
 
-body {
-  background-image: radial-gradient(circle at 1px 1px, rgb(148 163 184 / 0.25) 1px, transparent 0);
-  background-size: 22px 22px;
+  --color-slate-50: #f9fafb; --color-slate-100: #f3f4f6; --color-slate-200: #e5e7eb; --color-slate-300: #d1d5db;
+  --color-slate-400: #9ca3af; --color-slate-500: #6b7280; --color-slate-600: #4b5563; --color-slate-700: #374151;
+  --color-slate-800: #1f2937; --color-slate-900: #111827; --color-slate-950: #0b0f19;
+
+  --radius-lg: 0.25rem; --radius-xl: 0.25rem; --radius-2xl: 0.25rem;
 }
-.hero {
-  @apply relative overflow-hidden rounded-md text-white;
-  background-color: #0f172a;
-  background-image:
-    linear-gradient(rgb(15 23 42 / 0.9), rgb(15 23 42 / 0.9)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cpath d='M0 40h160M0 120h160M40 0v160M120 0v160' stroke='%23ffffff' stroke-opacity='.08' stroke-width='6' fill='none'/%3E%3Cpath d='M0 80h160M80 0v160' stroke='%23ffffff' stroke-opacity='.05' stroke-width='2' stroke-dasharray='8 8' fill='none'/%3E%3C/svg%3E");
-}
+
+body { @apply bg-gray-100 font-sans text-gray-800 antialiased; }
+
+.btn { @apply inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50; }
+.btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700; }
+.btn-green { @apply bg-emerald-700 text-white hover:bg-emerald-800; }
+.btn-red { @apply bg-red-700 text-white hover:bg-red-800; }
+.btn-ghost { @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50; }
+
+.card { @apply rounded border border-gray-300 bg-white p-4; }
+.hero { @apply rounded bg-brand-600 text-white; }
+.input { @apply w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600; }
+.label { @apply mb-1 block text-xs font-semibold text-gray-600; }
+.leaflet-container { font-family: inherit; }

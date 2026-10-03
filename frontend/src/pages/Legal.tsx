@@ -7,7 +7,7 @@ const UPDATED = "3 October 2026";
 function Page({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-slate-900 text-white">
+      <header className="bg-brand-600 text-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
           <Link to="/" className="text-lg font-semibold tracking-tight">StreetPulse</Link>
           <Link to="/login" className="text-sm text-slate-300 hover:text-white">Sign in</Link>
