@@ -46,6 +46,39 @@ export default function ReportIssue() {
   };
   useEffect(locate, []);
 
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<{ place_id: number; display_name: string; lat: string; lon: string }[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [searchMsg, setSearchMsg] = useState("");
+
+  const search = async () => {
+    const q = query.trim();
+    if (!q) return;
+    setSearching(true);
+    setSearchMsg("");
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&q=${encodeURIComponent(q)}`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setResults(data);
+      if (data.length) pick(data[0], true);
+      else setSearchMsg("No places found. Try a nearby landmark or area name.");
+    } catch {
+      setSearchMsg("Search is unavailable right now. Click the map to select the location.");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const pick = (r: { display_name: string; lat: string; lon: string }, keepList = false) => {
+    setCoords({ lat: parseFloat(r.lat).toFixed(6), lon: parseFloat(r.lon).toFixed(6) });
+    setAccuracy(null);
+    setStreet(r.display_name.split(",").slice(0, 2).join(",").trim());
+    setLocMsg("Location set from search. Click the map to fine-tune.");
+    if (!keepList) setResults([]);
+    setTimeout(() => document.getElementById("location-map")?.scrollIntoView({ behavior: "smooth", block: "center" }), 50);
+  };
+
   const latNum = parseFloat(coords.lat);
   const lonNum = parseFloat(coords.lon);
   const hasCoords = !isNaN(latNum) && !isNaN(lonNum);
@@ -148,6 +181,23 @@ export default function ReportIssue() {
 
       <section className="card space-y-3">
         <h2 className="font-bold">3. Location &amp; details</h2>
+        <div>
+          <label className="label" htmlFor="place-search">Search for a place, street or landmark</label>
+          <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); search(); }}>
+            <input id="place-search" className="input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="e.g. Silk Board Junction, Bengaluru" />
+            <button className="btn btn-primary" type="submit" disabled={searching || !query.trim()}>{searching ? "Searching..." : "Search"}</button>
+          </form>
+          {searchMsg && <p className="mt-1 text-xs text-slate-500">{searchMsg}</p>}
+          {results.length > 0 && (
+            <ul className="mt-2 divide-y divide-gray-200 rounded border border-gray-300 bg-white text-sm">
+              {results.map((r) => (
+                <li key={r.place_id}>
+                  <button type="button" className="w-full px-3 py-2 text-left hover:bg-gray-50" onClick={() => pick(r)}>{r.display_name}</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <div><label className="label">Latitude</label><input className="input" value={coords.lat} onChange={(e) => setCoords({ ...coords, lat: e.target.value })} /></div>
           <div><label className="label">Longitude</label><input className="input" value={coords.lon} onChange={(e) => setCoords({ ...coords, lon: e.target.value })} /></div>
