@@ -25,6 +25,20 @@ def _img(issue_type: str, idx: int, w: int = 800) -> str:
     return f"https://commons.wikimedia.org/wiki/Special:FilePath/{quote(files[idx % len(files)])}?width={w}"
 
 
+def refresh_demo_images(db: Session) -> None:
+    """Replace legacy random picsum placeholders on existing seeded media with issue-related photos."""
+    items = db.query(Media).filter(Media.cloudinary_url.like("%picsum.photos%")).order_by(Media.id).all()
+    for n, m in enumerate(items):
+        inc = db.get(Incident, m.incident_id)
+        if not inc:
+            continue
+        full, thumb = _img(inc.issue_type, n), _img(inc.issue_type, n, 400)
+        for ev in db.query(TimelineEvent).filter(TimelineEvent.media_url == m.cloudinary_url).all():
+            ev.media_url, ev.thumbnail_url = full, thumb
+        m.cloudinary_url, m.thumbnail_url = full, thumb
+    db.commit()
+
+
 # type, street, lat, lon, report offsets (days ago) + severities, workflow
 SPECS = [
     dict(n=1, type="POTHOLE", street="Hosur Road, Silk Board", lat=12.9177, lon=77.6238,

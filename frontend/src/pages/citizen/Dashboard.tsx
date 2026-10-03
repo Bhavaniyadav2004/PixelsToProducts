@@ -27,9 +27,10 @@ export default function CitizenDashboard() {
   useEffect(locate, []);
   if (!mine.data || !all.data) return <Loading error={mine.error || all.error} />;
 
-  const incidents = [...new Map(mine.data.map((r) => [r.incident.id, r.incident])).values()];
+  const uniqueReports = [...new Map(mine.data.map((r) => [r.incident.id, r])).values()];
+  const incidents = uniqueReports.map((r) => r.incident);
   const open = incidents.filter((i) => i.status !== "RESOLVED").length;
-  const needsConfirm = mine.data.filter((r) => r.incident.status === "AWAITING_VERIFICATION");
+  const needsConfirm = uniqueReports.filter((r) => r.incident.status === "AWAITING_VERIFICATION");
 
   return (
     <>
@@ -66,7 +67,7 @@ export default function CitizenDashboard() {
         <section>
           <h2 className="mb-3 font-bold">Recent reports</h2>
           <div className="space-y-3">
-            {mine.data.slice(0, 4).map((r) => <IncidentCard key={r.id} incident={r.incident} to={`/citizen/reports/${r.id}`} />)}
+            {uniqueReports.slice(0, 4).map((r) => <IncidentCard key={r.id} incident={r.incident} to={`/citizen/reports/${r.id}`} />)}
             {!mine.data.length && <p className="text-sm text-slate-500">You haven't reported anything yet.</p>}
           </div>
         </section>

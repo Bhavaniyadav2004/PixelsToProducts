@@ -20,6 +20,9 @@ async def lifespan(_: FastAPI):
             if db.scalars(select(User).limit(1)).first() is None:
                 from .seed import seed
                 seed(db)
+            else:
+                from .seed import refresh_demo_images
+                refresh_demo_images(db)
     yield
 
 
