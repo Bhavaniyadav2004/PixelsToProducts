@@ -36,11 +36,11 @@ export default function CitizenDashboard() {
     <>
       <section className="hero mb-5 flex flex-wrap items-center justify-between gap-4 px-6 py-8 sm:px-8">
         <div>
-          <p className="text-sm text-white/70">Citizen portal</p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight">Hello, {user?.name}</h1>
-          <p className="mt-2 max-w-xl text-sm text-white/80">Report road and street issues, follow each repair through its timeline, and confirm when the work is done.</p>
+          <p className="text-sm text-slate-600">Citizen portal</p>
+          <h1 className="mt-1 text-3xl">Hello, {user?.name}</h1>
+          <p className="mt-2 max-w-xl text-sm text-slate-600">Report road and street issues, follow each repair through its timeline, and confirm when the work is done.</p>
         </div>
-        <Link to="/citizen/report" className="btn bg-white px-5 py-2.5 text-slate-900 hover:bg-slate-200">Report an issue</Link>
+        <Link to="/citizen/report" className="btn btn-primary px-5 py-2.5">Report an issue</Link>
       </section>
       <div className="mb-5 grid grid-cols-3 gap-3">
         <StatCard label="My reports" value={mine.data.length} />

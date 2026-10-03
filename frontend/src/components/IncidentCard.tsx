@@ -7,7 +7,7 @@ import { StatusBadge } from "./StatusBadge";
 
 export default function IncidentCard({ incident: i, to, footer }: { incident: Incident; to?: string; footer?: ReactNode }) {
   const body = (
-    <div className="flex gap-3">
+    <div className="flex flex-col gap-3 sm:flex-row">
       {i.thumbnail_url ? (
         <img src={i.thumbnail_url} alt="" className="h-20 w-28 shrink-0 rounded-sm border border-gray-200 object-cover" loading="lazy" />
       ) : (

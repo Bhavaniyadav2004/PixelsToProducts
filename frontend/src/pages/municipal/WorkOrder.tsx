@@ -15,6 +15,7 @@ export default function WorkOrder() {
   const [stage, setStage] = useState("BEFORE");
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   if (!data) return <Loading error={error} />;
   const i = data;
@@ -22,6 +23,7 @@ export default function WorkOrder() {
 
   const act = async (action: string, notes?: string) => {
     setBusy(true);
+    setVerifying(action === "complete");
     setMsg("");
     try {
       const { data } = await api.patch(`/municipal/work-orders/${id}/status`, { action, notes: notes || null });
@@ -31,14 +33,15 @@ export default function WorkOrder() {
       setMsg(errMsg(e));
     } finally {
       setBusy(false);
+      setVerifying(false);
     }
   };
 
   return (
     <>
       <PageTitle title="Work Order" />
-      <IncidentView incident={i}>
-        <section className="card space-y-3">
+      <IncidentView incident={i} verifying={verifying}>
+        <fieldset className="card min-w-0 space-y-3" disabled={busy}>
           <h2 className="font-bold">Actions</h2>
           {!open && <p className="text-sm text-slate-500">No actions available in status {i.status.replace(/_/g, " ").toLowerCase()}.</p>}
           {i.status === "ASSIGNED" && (
@@ -61,10 +64,10 @@ export default function WorkOrder() {
             </>
           )}
           {i.status === "IN_PROGRESS" && (
-            <button className="btn btn-green w-full" disabled={busy} onClick={() => act("complete", note)}>Mark Completed</button>
+            <button className="btn btn-green w-full" disabled={busy} onClick={() => act("complete", note)}>{verifying ? "Verifying repair..." : "Mark Completed"}</button>
           )}
-          {msg && <p className="text-sm text-rose-600">{msg}</p>}
-        </section>
+          {msg && <p role="alert" className="text-sm text-rose-600">{msg}</p>}
+        </fieldset>
       </IncidentView>
     </>
   );

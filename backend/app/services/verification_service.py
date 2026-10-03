@@ -30,10 +30,10 @@ def run_ai_verification(db: Session, incident: Incident) -> Verification:
         raise HTTPException(400, "No BEFORE image available for comparison")
 
     result, meta = ai_service.verify_repair(
-        before.thumbnail_url or before.cloudinary_url if before.media_type == "video" else before.cloudinary_url,
-        after.cloudinary_url,
+        (before.thumbnail_url or "") if before.media_type == "video" else before.cloudinary_url,
+        (after.thumbnail_url or "") if after.media_type == "video" else after.cloudinary_url,
     )
-    if meta.get("source") in ("unavailable", "demo"):
+    if meta.get("source") in ("unavailable", "demo") or meta.get("comparable") is False or result.confidence < HIGH_CONFIDENCE:
         outcome = "REQUIRES_REVIEW"
     elif not result.improvement_detected:
         outcome = "FAILED"

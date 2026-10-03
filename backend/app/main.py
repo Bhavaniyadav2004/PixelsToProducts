@@ -40,4 +40,4 @@ for r in (auth, media, reports, incidents, verification, repairs, dashboards):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "cloudinary": settings.cloudinary_enabled, "ai": bool(settings.AI_API_KEY)}
+    return {"status": "ok", "cloudinary": settings.cloudinary_enabled, "ai": settings.cloudinary_enabled}

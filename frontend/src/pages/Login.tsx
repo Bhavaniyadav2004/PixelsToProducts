@@ -37,11 +37,11 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-brand-600 text-white">
-        <div className="mx-auto max-w-5xl px-4 py-3"><Link to="/" className="text-lg font-semibold">StreetPulse</Link></div>
+      <header className="landing-header">
+        <div className="landing-container landing-nav"><Link to="/" className="landing-brand">StreetPulse<span className="landing-brand-dot" aria-hidden="true" /></Link><Link to="/" className="text-sm hover:underline">Back to home</Link></div>
       </header>
-      <div className="mx-auto mt-10 w-full max-w-sm px-4">
-        <form onSubmit={submit} className="card space-y-4 p-6">
+      <div className="auth-content">
+        <form onSubmit={submit} className="card auth-panel space-y-4">
           <h1 className="text-xl font-semibold">{isRegister ? "Create an account" : "Sign in"}</h1>
           {isRegister && (
             <div><label className="label">Full name</label><input className="input" required value={name} onChange={(e) => setName(e.target.value)} /></div>
@@ -55,15 +55,19 @@ export default function Login() {
           </button>
         </form>
         {!isRegister && (
-          <div className="mt-4 rounded border border-dashed border-gray-400 p-3 text-xs text-gray-600">
+          <div className="auth-demo">
             Demo accounts - click to fill:
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {DEMO.map(([l, e, p]) => (
                 <button type="button" key={l} className="btn btn-ghost px-2 py-1 text-xs" onClick={() => { setEmail(e); setPassword(p); }}>{l}</button>
               ))}
             </div>
           </div>
         )}
+        <nav aria-label="Legal" className="mt-6 flex flex-wrap gap-5 text-xs text-gray-600">
+          <Link to="/privacy" className="hover:underline">Privacy policy</Link>
+          <Link to="/terms" className="hover:underline">Terms &amp; conditions</Link>
+        </nav>
       </div>
     </div>
   );

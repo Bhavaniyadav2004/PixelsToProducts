@@ -72,7 +72,7 @@ export default function IncidentDetails() {
           </div>
           <div className="flex flex-wrap gap-2">
             {i.status !== "RESOLVED" && <button className="btn btn-green" onClick={() => patch({ status: "RESOLVED", note: "Closed by admin" })}>Close</button>}
-            {(i.status === "RESOLVED" || i.status === "REQUIRES_REVIEW") && <button className="btn btn-red" onClick={() => patch({ status: "IN_PROGRESS", note: "Reopened by admin" })}>Reopen</button>}
+            {["COMPLETED", "AWAITING_VERIFICATION", "RESOLVED", "REQUIRES_REVIEW"].includes(i.status) && <button className="btn btn-red" onClick={() => patch({ status: "IN_PROGRESS", note: "Reopened by admin" })}>Reopen</button>}
           </div>
           {msg && <p className="text-sm text-rose-600">{msg}</p>}
         </section>

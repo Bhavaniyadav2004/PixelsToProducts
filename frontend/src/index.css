@@ -2,22 +2,30 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme {
-  --font-sans: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-  --color-brand-50: #eef1f5;
+  --font-sans: "Trebuchet MS", sans-serif;
+  --color-brand-50: #edf3fa;
   --color-brand-600: #0f2338;
   --color-brand-700: #0a1a2b;
 
   --color-indigo-50: #eef1f5; --color-indigo-100: #dde3ea; --color-indigo-200: #bcc7d4;
   --color-indigo-500: #2a4560; --color-indigo-600: #0f2338; --color-indigo-700: #0a1a2b; --color-indigo-800: #07121e;
 
-  --color-slate-50: #f9fafb; --color-slate-100: #f3f4f6; --color-slate-200: #e5e7eb; --color-slate-300: #d1d5db;
-  --color-slate-400: #9ca3af; --color-slate-500: #6b7280; --color-slate-600: #4b5563; --color-slate-700: #374151;
-  --color-slate-800: #1f2937; --color-slate-900: #111827; --color-slate-950: #0b0f19;
+  --color-gray-50: #f8fafc; --color-gray-100: #f5f7fa; --color-gray-200: #dce3ec; --color-gray-300: #bdcbdc;
+  --color-gray-400: #8293a7; --color-gray-500: #637387; --color-gray-600: #526276; --color-gray-700: #374b60;
+  --color-gray-800: #293e54; --color-gray-900: #0f2338; --color-gray-950: #0a1a2b;
+  --color-slate-50: #f8fafc; --color-slate-100: #edf3fa; --color-slate-200: #dce3ec; --color-slate-300: #bdcbdc;
+  --color-slate-400: #8293a7; --color-slate-500: #637387; --color-slate-600: #526276; --color-slate-700: #374b60;
+  --color-slate-800: #293e54; --color-slate-900: #0f2338; --color-slate-950: #0a1a2b;
+  --color-purple-50: #edf3fa; --color-purple-100: #dfeaf6; --color-purple-200: #bdcfe3; --color-purple-300: #9db7d2;
+  --color-purple-600: #365571; --color-purple-700: #2a4560; --color-purple-800: #0f2338;
 
   --radius-lg: 0.25rem; --radius-xl: 0.25rem; --radius-2xl: 0.25rem;
 }
 
 body { @apply bg-gray-100 font-sans text-gray-800 antialiased; }
+body { letter-spacing: 0; }
+a:focus-visible { outline: 2px solid #365571; outline-offset: 4px; }
+h1, h2, h3, p { overflow-wrap: break-word; }
 
 .btn { @apply inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50; }
 .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700; }
@@ -26,10 +34,39 @@ body { @apply bg-gray-100 font-sans text-gray-800 antialiased; }
 .btn-ghost { @apply border border-gray-300 bg-white text-gray-700 hover:bg-gray-50; }
 
 .card { @apply rounded border border-gray-300 bg-white p-4; }
-.hero { @apply rounded bg-brand-600 text-white; }
+.hero { @apply border-y border-gray-200 bg-brand-50 text-brand-600; }
 .input { @apply w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600; }
 .label { @apply mb-1 block text-xs font-semibold text-gray-600; }
 .leaflet-container { font-family: inherit; }
+.btn { min-height: 40px; border-radius: 3px; }
+.input { min-width: 0; min-height: 40px; border-radius: 3px; }
+.label { color: #455a70; }
+section.card { border-radius: 0; border-inline: 0; background: transparent; padding-inline: 0; }
+.page-title h1, .auth-panel h1, .legal-content h1, .hero h1 { font-family: Georgia, serif; font-weight: 400; }
+.page-title h1 { font-size: 28px; line-height: 1.2; }
+.app-header { background: #f5f7fa; border-bottom: 1px solid #dce3ec; }
+.app-topbar { display: flex; min-height: 76px; align-items: center; justify-content: space-between; gap: 20px; }
+.app-account { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 8px 20px; font-size: 13px; }
+.app-account > span { overflow-wrap: anywhere; }
+.app-navigation { background: #edf3fa; border-top: 1px solid #dce3ec; }
+.app-nav-links { display: flex; overflow-x: auto; }
+.app-nav-link { flex-shrink: 0; padding: 13px 16px; border-bottom: 2px solid transparent; color: #526276; font-size: 14px; }
+.app-nav-link:hover { color: #0f2338; background: #e1e9f2; }
+.app-nav-link.active { border-color: #0f2338; color: #0f2338; font-weight: 700; }
+.app-main { padding-block: 28px 48px; }
+.app-main .grid > * { min-width: 0; }
+.auth-content { max-width: 420px; margin: 48px auto; padding-inline: 20px; }
+.auth-panel { padding: 28px; border-top: 3px solid #0f2338; }
+.auth-panel h1 { font-size: 28px; }
+.auth-demo { border-top: 1px solid #bdcbdc; padding-top: 20px; margin-top: 24px; font-size: 12px; color: #526276; }
+@media (max-width: 640px) {
+  .app-topbar { min-height: 76px; gap: 12px; }
+  .app-topbar .landing-brand { font-size: 18px; }
+  .app-account { max-width: 55%; font-size: 12px; }
+  .app-main { padding-top: 24px; }
+  .auth-content { margin-block: 32px; }
+  .auth-panel { padding: 22px; }
+}
 
 .landing-page { --landing-ink: #0f2338; --landing-accent: #0f2338; background: #f5f7fa; color: var(--landing-ink); font-family: "Trebuchet MS", sans-serif; letter-spacing: 0; }
 .landing-container { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }

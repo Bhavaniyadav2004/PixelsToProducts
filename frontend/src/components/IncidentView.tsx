@@ -12,7 +12,7 @@ const RESULT_TONE: Record<string, string> = {
   VERIFIED: "text-emerald-700", REQUIRES_REVIEW: "text-amber-700", FAILED: "text-rose-700",
 };
 
-export default function IncidentView({ incident: i, children, showPriority = true }: { incident: Incident; children?: ReactNode; showPriority?: boolean }) {
+export default function IncidentView({ incident: i, children, showPriority = true, verifying = false }: { incident: Incident; children?: ReactNode; showPriority?: boolean; verifying?: boolean }) {
   const v = i.verification;
   const citizenMedia = (i.media ?? []).filter((m) => m.media_role === "CITIZEN_REPORT");
   return (
@@ -50,13 +50,20 @@ export default function IncidentView({ incident: i, children, showPriority = tru
 
         <aside className="space-y-5">
           {children}
+          {verifying && (
+            <section className="border-y border-slate-200 bg-brand-50 p-4 text-sm" role="status" aria-live="polite">
+              <h2 className="font-bold">Comparing repair photos...</h2>
+              <p className="mt-1 text-slate-600">Cloudinary AI Vision is checking the before and after evidence. This may take up to a minute.</p>
+              <progress className="mt-3 h-2 w-full accent-brand-600" aria-label="Repair verification in progress" />
+            </section>
+          )}
           {i.before && i.after && (
             <section className="card">
               <h2 className="mb-3 font-bold">Before / After</h2>
               <BeforeAfter before={i.before} after={i.after} />
             </section>
           )}
-          {v && (
+          {v && !verifying && (
             <section className="card text-sm">
               <h2 className="mb-2 font-bold">Verification</h2>
               <div>AI: <b className={RESULT_TONE[v.ai_result]}>{pretty(v.ai_result)}</b> ({Math.round(v.ai_confidence * 100)}% confidence)</div>

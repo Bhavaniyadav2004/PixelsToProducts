@@ -6,14 +6,14 @@ const UPDATED = "3 October 2026";
 
 function Page({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-brand-600 text-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-          <Link to="/" className="text-lg font-semibold tracking-tight">StreetPulse</Link>
-          <Link to="/login" className="text-sm text-slate-300 hover:text-white">Sign in</Link>
+    <div className="min-h-screen bg-gray-100">
+      <header className="landing-header">
+        <div className="landing-container landing-nav">
+          <Link to="/" className="landing-brand">StreetPulse<span className="landing-brand-dot" aria-hidden="true" /></Link>
+          <Link to="/login" className="text-sm hover:underline">Sign in</Link>
         </div>
       </header>
-      <main className="mx-auto max-w-3xl space-y-5 px-4 py-10 text-sm leading-relaxed text-slate-700">
+      <main className="legal-content mx-auto max-w-3xl space-y-5 px-5 py-10 text-sm leading-relaxed text-slate-700">
         <h1 className="text-3xl font-semibold text-slate-900">{title}</h1>
         <p className="text-slate-500">Last updated: {UPDATED}</p>
         {children}

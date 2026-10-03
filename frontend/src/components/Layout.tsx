@@ -15,33 +15,33 @@ export default function Layout() {
   if (!user) return null;
   return (
     <div className="min-h-screen">
-      <header className="bg-brand-600 text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5">
-          <Link to={homeFor(user.role)} className="text-lg font-semibold">StreetPulse</Link>
-          <div className="flex items-center gap-4 text-sm">
-            <span>{user.name} <span className="text-white/70">({pretty(user.role)})</span></span>
+      <header className="app-header">
+        <div className="landing-container app-topbar">
+          <Link to={homeFor(user.role)} className="landing-brand">StreetPulse<span className="landing-brand-dot" aria-hidden="true" /></Link>
+          <div className="app-account">
+            <span>{user.name} <span className="text-gray-500">({pretty(user.role)})</span></span>
             <button className="underline-offset-2 hover:underline" onClick={() => { logout(); nav("/"); }}>Sign out</button>
           </div>
         </div>
-        <nav className="border-t border-white/15 bg-brand-700">
-          <div className="mx-auto flex max-w-7xl flex-wrap px-4 text-sm">
+        <nav className="app-navigation" aria-label="Main navigation">
+          <div className="landing-container app-nav-links">
             {NAV[user.role].map(([to, label]) => (
               <NavLink key={to} to={to} end={to.split("/").length <= 2}
-                className={({ isActive }) => `border-b-2 px-4 py-2.5 ${isActive && !to.includes("?") ? "border-white font-medium" : "border-transparent text-white/80 hover:text-white"}`}>
+                className={({ isActive }) => `app-nav-link ${isActive && !to.includes("?") ? "active" : ""}`}>
                 {label}
               </NavLink>
             ))}
           </div>
         </nav>
       </header>
-      <main className="mx-auto max-w-7xl p-4 sm:p-6"><Outlet /></main>
+      <main className="landing-container app-main"><Outlet /></main>
     </div>
   );
 }
 
 export function PageTitle({ title, sub, right }: { title: string; sub?: string; right?: ReactNode }) {
   return (
-    <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-gray-300 pb-3">
+    <div className="page-title mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-gray-300 pb-4">
       <div>
         <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
         {sub && <p className="mt-0.5 text-sm text-gray-600">{sub}</p>}
