@@ -12,7 +12,7 @@ const RESULT_TONE: Record<string, string> = {
   VERIFIED: "text-emerald-700", REQUIRES_REVIEW: "text-amber-700", FAILED: "text-rose-700",
 };
 
-export default function IncidentView({ incident: i, children, showPriority = true }: { incident: Incident; children?: ReactNode; showPriority?: boolean }) {
+export default function IncidentView({ incident: i, children, showPriority = true, verifying = false }: { incident: Incident; children?: ReactNode; showPriority?: boolean; verifying?: boolean }) {
   const v = i.verification;
   const citizenMedia = (i.media ?? []).filter((m) => m.media_role === "CITIZEN_REPORT");
   return (
@@ -23,7 +23,7 @@ export default function IncidentView({ incident: i, children, showPriority = tru
           <StatusBadge status={i.status} />
           <SeverityBadge severity={i.severity} />
           {showPriority && <PriorityBadge level={i.priority_level} score={i.priority_score} />}
-          {i.recurring && <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-bold text-orange-700">⚠ RECURRING ISSUE</span>}
+          {i.recurring && <span className="rounded bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-700">RECURRING ISSUE</span>}
         </div>
         <div className="mt-1 text-slate-700">
           {pretty(i.issue_type)} on{" "}
@@ -50,13 +50,20 @@ export default function IncidentView({ incident: i, children, showPriority = tru
 
         <aside className="space-y-5">
           {children}
+          {verifying && (
+            <section className="border-y border-slate-200 bg-brand-50 p-4 text-sm" role="status" aria-live="polite">
+              <h2 className="font-bold">Comparing repair photos...</h2>
+              <p className="mt-1 text-slate-600">Cloudinary AI Vision is checking the before and after evidence. This may take up to a minute.</p>
+              <progress className="mt-3 h-2 w-full accent-brand-600" aria-label="Repair verification in progress" />
+            </section>
+          )}
           {i.before && i.after && (
             <section className="card">
               <h2 className="mb-3 font-bold">Before / After</h2>
               <BeforeAfter before={i.before} after={i.after} />
             </section>
           )}
-          {v && (
+          {v && !verifying && (
             <section className="card text-sm">
               <h2 className="mb-2 font-bold">Verification</h2>
               <div>AI: <b className={RESULT_TONE[v.ai_result]}>{pretty(v.ai_result)}</b> ({Math.round(v.ai_confidence * 100)}% confidence)</div>
@@ -68,7 +75,7 @@ export default function IncidentView({ incident: i, children, showPriority = tru
           {showPriority && i.priority_reasons && (
             <section className="card text-sm">
               <h2 className="mb-2 font-bold">Why this priority?</h2>
-              <ul className="space-y-1">{i.priority_reasons.map((r) => <li key={r}>✓ {r}</li>)}</ul>
+              <ul className="space-y-1">{i.priority_reasons.map((r) => <li key={r} className="list-inside list-disc">{r}</li>)}</ul>
               {i.priority_locked && <p className="mt-2 text-xs text-slate-500">Priority level manually set by an admin.</p>}
             </section>
           )}

@@ -46,7 +46,7 @@ export default function Incidents() {
             <tbody>
               {data.map((i) => (
                 <tr key={i.id} className="border-t hover:bg-slate-50">
-                  <td className="px-3 py-2 font-semibold"><Link className="text-indigo-600" to={`/admin/incidents/${i.id}`}>{i.incident_code}</Link>{i.recurring && <span title="Recurring"> ⚠</span>}</td>
+                  <td className="px-3 py-2 font-semibold"><Link className="text-indigo-600" to={`/admin/incidents/${i.id}`}>{i.incident_code}</Link>{i.recurring && <span className="ml-2 rounded bg-orange-100 px-1.5 py-0.5 text-[10px] font-bold text-orange-700">RECURRING</span>}</td>
                   <td className="px-3 py-2">{pretty(i.issue_type)}</td>
                   <td className="px-3 py-2">{i.street_name}</td>
                   <td className="px-3 py-2"><SeverityBadge severity={i.severity} /></td>

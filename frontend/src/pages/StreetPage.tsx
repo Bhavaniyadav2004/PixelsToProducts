@@ -42,7 +42,7 @@ export default function StreetPage() {
               <span className="font-bold">{i.incident_code}</span>
               <StatusBadge status={i.status} />
               <span className="text-sm text-slate-600">{pretty(i.issue_type)} - {fmtDate(i.first_reported_at)}</span>
-              {i.recurring && <span className="text-xs font-semibold text-orange-600">⚠ RECURRING</span>}
+              {i.recurring && <span className="text-xs font-semibold text-orange-600">RECURRING</span>}
             </div>
             <div className="mt-3 flex gap-3 overflow-x-auto pb-2">
               {(i.media ?? []).map((m) => (

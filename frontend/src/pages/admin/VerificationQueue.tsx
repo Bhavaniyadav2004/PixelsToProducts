@@ -41,7 +41,7 @@ export default function VerificationQueue() {
           <section key={i.id} className="card">
             <div className="mb-3 flex flex-wrap items-center gap-3">
               <Link to={`/admin/incidents/${i.id}`} className="text-lg font-bold text-indigo-600">{i.incident_code}</Link>
-              <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${KIND[kind][1]}`}>{KIND[kind][0]}</span>
+              <span className={`rounded px-2 py-0.5 text-xs font-bold ${KIND[kind][1]}`}>{KIND[kind][0]}</span>
               <StatusBadge status={i.status} />
               <span className="text-sm text-slate-500">{pretty(i.issue_type)} - {i.street_name}</span>
             </div>

@@ -6,6 +6,7 @@ import { Role } from "./types";
 import { homeFor } from "./utils/format";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import { Privacy, Terms } from "./pages/Legal";
 import StreetPage from "./pages/StreetPage";
 import IncidentPage from "./pages/IncidentPage";
 import CitizenDashboard from "./pages/citizen/Dashboard";
@@ -36,6 +37,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route element={<Guard />}>
         <Route element={<Layout />}>
           <Route path="/incident/:id" element={<IncidentPage />} />

@@ -20,6 +20,9 @@ async def lifespan(_: FastAPI):
             if db.scalars(select(User).limit(1)).first() is None:
                 from .seed import seed
                 seed(db)
+            else:
+                from .seed import refresh_demo_images
+                refresh_demo_images(db)
     yield
 
 
@@ -37,4 +40,4 @@ for r in (auth, media, reports, incidents, verification, repairs, dashboards):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "cloudinary": settings.cloudinary_enabled, "ai": bool(settings.AI_API_KEY)}
+    return {"status": "ok", "cloudinary": settings.cloudinary_enabled, "ai": settings.cloudinary_enabled}

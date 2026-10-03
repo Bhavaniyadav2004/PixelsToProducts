@@ -1,21 +1,23 @@
+import { pretty } from "../utils/format";
+
 const COLORS: Record<string, string> = {
-  CRITICAL: "bg-red-600 text-white",
-  HIGH: "bg-orange-500 text-white",
-  MEDIUM: "bg-yellow-400 text-yellow-900",
-  LOW: "bg-green-500 text-white",
+  CRITICAL: "bg-red-100 text-red-900 border-red-400",
+  HIGH: "bg-orange-100 text-orange-900 border-orange-400",
+  MEDIUM: "bg-yellow-100 text-yellow-900 border-yellow-400",
+  LOW: "bg-green-100 text-green-900 border-green-400",
 };
 
-const pill = "inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-bold";
+const base = "inline-block whitespace-nowrap rounded border px-2 py-0.5 text-xs font-medium";
 
 export function PriorityBadge({ level, score }: { level: string; score?: number }) {
   return (
-    <span className={`${pill} ${COLORS[level] ?? COLORS.LOW}`}>
-      {level}
-      {score !== undefined && ` ${Math.round(score)}`}
+    <span className={`${base} ${COLORS[level] ?? COLORS.LOW}`} title="Priority">
+      Priority: {pretty(level)}
+      {score !== undefined && ` (${Math.round(score)})`}
     </span>
   );
 }
 
 export function SeverityBadge({ severity }: { severity: string }) {
-  return <span className={`${pill} ${COLORS[severity] ?? COLORS.LOW}`}>{severity}</span>;
+  return <span className={`${base} ${COLORS[severity] ?? COLORS.LOW}`} title="Severity">{pretty(severity)}</span>;
 }
