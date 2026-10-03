@@ -1,36 +1,33 @@
 import { TimelineEvent } from "../types";
 import { fmtDate } from "../utils/format";
 
-const ICON: Record<string, [string, string]> = {
-  REPORT: ["📸", "bg-sky-500"],
-  PROGRESSION: ["📈", "bg-orange-500"],
-  VERIFIED: ["👁", "bg-sky-500"],
-  ASSIGNED: ["📋", "bg-indigo-500"],
-  ACCEPTED: ["🤝", "bg-indigo-500"],
-  REPAIR_STARTED: ["🚧", "bg-amber-500"],
-  REPAIR_BEFORE: ["📷", "bg-amber-500"],
-  REPAIR_DURING: ["📷", "bg-amber-500"],
-  REPAIR_AFTER: ["📷", "bg-teal-500"],
-  REPAIR_COMPLETED: ["🛠", "bg-teal-500"],
-  AI_VERIFICATION: ["🔍", "bg-purple-500"],
-  CITIZEN_CONFIRMATION: ["👤", "bg-purple-500"],
-  RESOLVED: ["✅", "bg-emerald-600"],
-  REOPENED: ["⚠", "bg-rose-500"],
-  REVIEW: ["⚖", "bg-rose-500"],
-  NOTE: ["📝", "bg-slate-500"],
-  PRIORITY: ["⭐", "bg-slate-500"],
-  ADMIN: ["🏛", "bg-slate-500"],
+const COLOR: Record<string, string> = {
+  REPORT: "bg-sky-600",
+  PROGRESSION: "bg-orange-600",
+  VERIFIED: "bg-sky-600",
+  ASSIGNED: "bg-slate-700",
+  ACCEPTED: "bg-slate-700",
+  REPAIR_STARTED: "bg-amber-600",
+  REPAIR_BEFORE: "bg-amber-600",
+  REPAIR_DURING: "bg-amber-600",
+  REPAIR_AFTER: "bg-teal-600",
+  REPAIR_COMPLETED: "bg-teal-600",
+  AI_VERIFICATION: "bg-violet-600",
+  CITIZEN_CONFIRMATION: "bg-violet-600",
+  RESOLVED: "bg-emerald-600",
+  REOPENED: "bg-rose-600",
+  REVIEW: "bg-rose-600",
 };
 
 export default function Timeline({ events }: { events: TimelineEvent[] }) {
   if (!events.length) return <p className="text-sm text-slate-500">No activity yet.</p>;
   return (
-    <ol className="relative ml-5 border-l-2 border-slate-200">
+    <ol className="relative ml-3 border-l border-slate-300">
       {events.map((e) => {
-        const [icon, color] = ICON[e.event_type] ?? ["•", "bg-slate-400"];
+        const color = COLOR[e.event_type] ?? "bg-slate-500";
         return (
-          <li key={e.id} className="mb-8 ml-7">
-            <span className={`absolute -left-[17px] flex h-8 w-8 items-center justify-center rounded-full text-base ring-4 ring-white ${color}`}>{icon}</span>
+          <li key={e.id} className="mb-7 ml-6">
+            <span className={`absolute -left-[7px] mt-1 h-3 w-3 rounded-full ring-4 ring-white ${color}`} />
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{fmtDate(e.created_at)}</div>
             <div className="text-base font-semibold text-slate-900">{e.title}</div>
             {e.detail && <p className="text-sm text-slate-600">{e.detail}</p>}

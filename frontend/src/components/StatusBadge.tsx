@@ -11,7 +11,7 @@ const STATUS: Record<string, string> = {
   RESOLVED: "bg-emerald-100 text-emerald-700",
 };
 
-const pill = "inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold";
+const pill = "inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs font-semibold";
 
 export function StatusBadge({ status }: { status: string }) {
   return <span className={`${pill} ${STATUS[status] ?? STATUS.NEW}`}>{pretty(status)}</span>;

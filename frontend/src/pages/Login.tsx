@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { errMsg } from "../services/api";
 import { homeFor } from "../utils/format";
@@ -46,7 +46,8 @@ export default function Login() {
         <div><label className="label">Password</label><input className="input" type="password" required minLength={isRegister ? 6 : 1} value={password} onChange={(e) => setPassword(e.target.value)} /></div>
         {error && <p className="text-sm text-rose-600">{error}</p>}
         <button className="btn btn-primary w-full" disabled={busy}>{isRegister ? "Register" : "Sign in"}</button>
-        <button type="button" className="w-full text-center text-sm text-indigo-600" onClick={() => setIsRegister(!isRegister)}>
+        {isRegister && <p className="text-xs text-slate-500">By registering you agree to the <Link className="underline" to="/terms">Terms</Link> and <Link className="underline" to="/privacy">Privacy policy</Link>.</p>}
+        <button type="button" className="w-full text-center text-sm text-blue-800" onClick={() => setIsRegister(!isRegister)}>
           {isRegister ? "Have an account? Sign in" : "New citizen? Create an account"}
         </button>
         {!isRegister && (

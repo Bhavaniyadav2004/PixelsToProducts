@@ -1,5 +1,6 @@
-"""Demo data: 10 incidents, 30 reports, 40 media, 5 repair workflows (3 verified, 2 disputed), 2 recurring clusters."""
+"""Demo data (Bengaluru): 10 incidents, 30 reports, 40 media, 5 repair workflows (3 verified, 2 disputed), 2 recurring clusters."""
 from datetime import datetime, timedelta
+from urllib.parse import quote
 
 from sqlalchemy.orm import Session
 
@@ -9,40 +10,50 @@ from .services import priority_service
 from .services.incident_service import slugify
 from .utils.security import hash_password
 
+# Photos are Wikimedia Commons files; see each file page for author and licence.
+_POTHOLE = ["Potholes in Bengaluru road.jpg", "Roads deformed T munnekollala Bengaluru.jpg", "Roads deformed T munnekollala Bengaluru 2.jpg"]
+PHOTOS = {
+    "POTHOLE": _POTHOLE,
+    "ROAD_CRACK": _POTHOLE[1:],
+    "WATERLOGGING": ["India - Chennai - Monsoon - 06 (3059058000).jpg"],
+    "BROKEN_FOOTPATH": ["Cracked pavement near National Park (35520277).jpg"],
+}
 
-def _img(key: str, w: int = 800, h: int = 600) -> str:
-    return f"https://picsum.photos/seed/{key}/{w}/{h}"
+
+def _img(issue_type: str, idx: int, w: int = 800) -> str:
+    files = PHOTOS.get(issue_type) or _POTHOLE
+    return f"https://commons.wikimedia.org/wiki/Special:FilePath/{quote(files[idx % len(files)])}?width={w}"
 
 
-# key, type, street, lat, lon, initial/final severity, report offsets (days ago) + severities, workflow
+# type, street, lat, lon, report offsets (days ago) + severities, workflow
 SPECS = [
-    dict(n=1, type="POTHOLE", street="MG Road", lat=17.3850, lon=78.4867,
+    dict(n=1, type="POTHOLE", street="Hosur Road, Silk Board", lat=12.9177, lon=77.6238,
          reports=[(60, "LOW"), (52, "LOW"), (45, "MEDIUM"), (40, "MEDIUM"), (36, "HIGH"), (33, "HIGH"), (30, "HIGH")],
          flow=dict(assign=28, start=24, evidence=[("BEFORE", 24), ("DURING", 22), ("AFTER", 20)], done=20, ai=("VERIFIED", 0.91), citizen="YES", end="RESOLVED")),
-    dict(n=2, type="WATERLOGGING", street="Station Road", lat=17.3900, lon=78.4800,
+    dict(n=2, type="WATERLOGGING", street="Bannerghatta Road", lat=12.8930, lon=77.5970,
          reports=[(40, "MEDIUM"), (37, "MEDIUM"), (35, "HIGH"), (34, "HIGH")],
          flow=dict(assign=32, start=30, evidence=[("BEFORE", 30), ("AFTER", 27)], done=27, ai=("VERIFIED", 0.88), citizen="YES", end="RESOLVED")),
-    dict(n=3, type="BROKEN_STREETLIGHT", street="Park Avenue", lat=17.3950, lon=78.4900,
+    dict(n=3, type="ROAD_CRACK", street="100 Feet Road, Indiranagar", lat=12.9719, lon=77.6412,
          reports=[(25, "MEDIUM"), (24, "MEDIUM")],
          flow=dict(assign=22, start=21, evidence=[("BEFORE", 21), ("AFTER", 19)], done=19, ai=("VERIFIED", 0.93), citizen="YES", end="RESOLVED")),
-    dict(n=4, type="POTHOLE", street="Ring Road Junction", lat=17.4100, lon=78.4700,
+    dict(n=4, type="POTHOLE", street="Outer Ring Road, Marathahalli", lat=12.9591, lon=77.6974,
          reports=[(20, "HIGH"), (18, "HIGH"), (17, "HIGH"), (16, "HIGH")],
          flow=dict(assign=14, start=12, evidence=[("BEFORE", 12), ("AFTER", 9)], done=9, ai=("VERIFIED", 0.82), citizen="NO", end="REQUIRES_REVIEW")),
-    dict(n=5, type="ROAD_CRACK", street="Lake View Road", lat=17.4200, lon=78.4950,
+    dict(n=5, type="ROAD_CRACK", street="Sarjapur Road", lat=12.9100, lon=77.6850,
          reports=[(15, "MEDIUM"), (13, "MEDIUM")],
          flow=dict(assign=11, start=9, evidence=[("AFTER", 6)], done=6, ai=("VERIFIED", 0.78), citizen="NO", end="REQUIRES_REVIEW")),
-    dict(n=6, type="POTHOLE", street="MG Road", lat=17.3852, lon=78.4868,
+    dict(n=6, type="POTHOLE", street="Hosur Road, Silk Board", lat=12.9179, lon=77.6239,
          reports=[(8, "MEDIUM"), (5, "HIGH"), (2, "HIGH")], flow=dict(assign=1, due=3, end="ASSIGNED")),
-    dict(n=7, type="BROKEN_FOOTPATH", street="Temple Street", lat=17.3700, lon=78.4600,
+    dict(n=7, type="BROKEN_FOOTPATH", street="Jayanagar 4th Block", lat=12.9250, lon=77.5938,
          reports=[(10, "MEDIUM"), (7, "MEDIUM")], flow=dict(assign=4, due=0, end="ASSIGNED")),
-    dict(n=8, type="WATERLOGGING", street="Station Road", lat=17.3901, lon=78.4801,
+    dict(n=8, type="WATERLOGGING", street="Bannerghatta Road", lat=12.8931, lon=77.5971,
          reports=[(6, "MEDIUM"), (3, "MEDIUM")], flow=None),
-    dict(n=9, type="DAMAGED_MANHOLE", street="Ring Road Junction", lat=17.4105, lon=78.4710,
+    dict(n=9, type="POTHOLE", street="Outer Ring Road, Marathahalli", lat=12.9594, lon=77.6980,
          reports=[(4, "CRITICAL"), (2, "CRITICAL"), (1, "CRITICAL")], flow=None),
-    dict(n=10, type="DAMAGED_SIGN", street="College Road", lat=17.3600, lon=78.4400,
+    dict(n=10, type="BROKEN_FOOTPATH", street="Residency Road", lat=12.9709, lon=77.6070,
          reports=[(3, "LOW")], flow=None),
 ]
-DEPT_FOR = {"WATERLOGGING": "Drainage", "BROKEN_STREETLIGHT": "Electrical"}
+DEPT_FOR = {"WATERLOGGING": "Drainage"}
 
 
 def seed(db: Session) -> None:
@@ -61,17 +72,17 @@ def seed(db: Session) -> None:
         db.add(u)
         return u
 
-    admin = user("City Admin", "admin@streetpulse.test", "ADMIN", "admin123")
+    admin = user("Suresh Murthy", "admin@streetpulse.test", "ADMIN", "admin123")
     members = {
-        "Road Maintenance": user("Ravi Kumar", "ravi@streetpulse.test", "MUNICIPAL_MEMBER", "municipal123", "Road Maintenance"),
+        "Road Maintenance": user("Ravi Gowda", "ravi@streetpulse.test", "MUNICIPAL_MEMBER", "municipal123", "Road Maintenance"),
         "Drainage": user("Meera Nair", "meera@streetpulse.test", "MUNICIPAL_MEMBER", "municipal123", "Drainage"),
-        "Electrical": user("Arun Das", "arun@streetpulse.test", "MUNICIPAL_MEMBER", "municipal123", "Electrical"),
+        "Electrical": user("Arun Shetty", "arun@streetpulse.test", "MUNICIPAL_MEMBER", "municipal123", "Electrical"),
     }
     citizens = [
-        user("Asha Citizen", "citizen@streetpulse.test", "CITIZEN", "citizen123"),
-        user("Bala Reddy", "bala@streetpulse.test", "CITIZEN", "citizen123"),
-        user("Chitra Rao", "chitra@streetpulse.test", "CITIZEN", "citizen123"),
-        user("Dev Patel", "dev@streetpulse.test", "CITIZEN", "citizen123"),
+        user("Ananya Rao", "citizen@streetpulse.test", "CITIZEN", "citizen123"),
+        user("Karthik Gowda", "bala@streetpulse.test", "CITIZEN", "citizen123"),
+        user("Divya Hegde", "chitra@streetpulse.test", "CITIZEN", "citizen123"),
+        user("Mohammed Irfan", "dev@streetpulse.test", "CITIZEN", "citizen123"),
     ]
     db.flush()
 
@@ -82,11 +93,15 @@ def seed(db: Session) -> None:
             thumbnail_url=media.thumbnail_url if media else None,
             media_type=media.media_type if media else None, actor_name=actor))
 
+    n_media = 0
+
     def media(inc, uid, role, key, when, report=None):
+        nonlocal n_media
         m = Media(incident_id=inc.id, report_id=report.id if report else None, uploaded_by=uid, media_type="image",
                   media_role=role, cloudinary_public_id=f"demo/{inc.incident_code}/{key}",
-                  cloudinary_url=_img(f"{inc.incident_code}-{key}"), thumbnail_url=_img(f"{inc.incident_code}-{key}", 400, 300),
+                  cloudinary_url=_img(inc.issue_type, n_media), thumbnail_url=_img(inc.issue_type, n_media, 400),
                   created_at=when)
+        n_media += 1
         db.add(m)
         db.flush()
         return m
@@ -110,8 +125,8 @@ def seed(db: Session) -> None:
             cit_i += 1
             when = ago(d)
             r = Report(incident_id=inc.id, user_id=u.id, latitude=spec["lat"], longitude=spec["lon"], created_at=when,
-                       description=["Large damage near the junction", "Getting worse every day", "Dangerous for two-wheelers",
-                                    "Please fix this soon", "Still not repaired", "Photo from this morning", "Needs urgent attention"][idx % 7])
+                       description=["Unsafe for two-wheelers and pedestrians", "Wider than last week", "Gets worse after every rain",
+                                    "Reported earlier, still not repaired", "Photo from this morning", "Damaged my scooter's tyre", "Needs urgent attention before the monsoon"][idx % 7])
             db.add(r)
             db.flush()
             m = media(inc, u.id, "CITIZEN_REPORT", f"citizen-{idx}", when, r)

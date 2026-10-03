@@ -5,7 +5,7 @@ const COLORS: Record<string, string> = {
   LOW: "bg-green-500 text-white",
 };
 
-const pill = "inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-bold";
+const pill = "inline-block whitespace-nowrap rounded px-2 py-0.5 text-xs font-bold";
 
 export function PriorityBadge({ level, score }: { level: string; score?: number }) {
   return (

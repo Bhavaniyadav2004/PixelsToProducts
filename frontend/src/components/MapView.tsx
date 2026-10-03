@@ -8,16 +8,22 @@ interface Props {
   height?: number;
   zoom?: number;
   linkPrefix?: string;
+  userPos?: [number, number] | null;
 }
 
-export default function MapView({ incidents, height = 360, zoom = 13, linkPrefix }: Props) {
-  const center: [number, number] = incidents.length
+export default function MapView({ incidents, height = 360, zoom = 13, linkPrefix, userPos }: Props) {
+  const center: [number, number] = userPos ?? (incidents.length
     ? [incidents.reduce((s, i) => s + i.latitude, 0) / incidents.length, incidents.reduce((s, i) => s + i.longitude, 0) / incidents.length]
-    : [17.385, 78.4867];
+    : [12.9716, 77.5946]);
   return (
     <div>
       <MapContainer center={center} zoom={zoom} style={{ height }} scrollWheelZoom={false} key={incidents.length + center.join()}>
         <TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {userPos && (
+          <CircleMarker center={userPos} radius={8} pathOptions={{ color: "#fff", weight: 3, fillColor: "#1d4ed8", fillOpacity: 1 }}>
+            <Popup>Your location</Popup>
+          </CircleMarker>
+        )}
         {incidents.map((i) => {
           const color = i.status === "RESOLVED" ? "#16a34a" : sevColor[i.severity];
           return (
@@ -40,6 +46,7 @@ export default function MapView({ incidents, height = 360, zoom = 13, linkPrefix
         <span><b style={{ color: sevColor.MEDIUM }}>●</b> Medium</span>
         <span><b style={{ color: sevColor.LOW }}>●</b> Low</span>
         <span><b style={{ color: "#16a34a" }}>●</b> Resolved</span>
+        {userPos && <span><b style={{ color: "#1d4ed8" }}>●</b> You</span>}
       </div>
     </div>
   );

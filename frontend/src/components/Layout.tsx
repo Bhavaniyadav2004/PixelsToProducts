@@ -13,26 +13,32 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
   if (!user) return null;
-  const accent = user.role === "ADMIN" ? "bg-slate-900" : user.role === "MUNICIPAL_MEMBER" ? "bg-amber-700" : "bg-indigo-700";
+  const accent = "bg-slate-900";
+  const roleLabel = user.role === "ADMIN" ? "Administrator" : user.role === "MUNICIPAL_MEMBER" ? "Municipal staff" : "Citizen";
   return (
     <div className="min-h-screen">
       <header className={`${accent} text-white`}>
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-          <Link to={homeFor(user.role)} className="text-lg font-bold">StreetPulse{user.role === "ADMIN" && " Admin"}</Link>
+          <Link to={homeFor(user.role)} className="text-lg font-semibold tracking-tight">StreetPulse</Link>
           <nav className="flex flex-1 flex-wrap gap-1 text-sm">
             {NAV[user.role].map(([to, label]) => (
-              <NavLink key={to} to={to} end={to.split("/").length <= 2} className={({ isActive }) => `rounded-md px-3 py-1.5 ${isActive && !to.includes("?") ? "bg-white/20" : "hover:bg-white/10"}`}>
+              <NavLink key={to} to={to} end={to.split("/").length <= 2} className={({ isActive }) => `px-3 py-1.5 border-b-2 ${isActive && !to.includes("?") ? "border-white" : "border-transparent text-slate-300 hover:text-white"}`}>
                 {label}
               </NavLink>
             ))}
           </nav>
           <div className="flex items-center gap-3 text-sm">
-            <span className="opacity-80">{user.name}</span>
+            <span className="opacity-80">{user.name} <span className="ml-1 rounded bg-white/10 px-1.5 py-0.5 text-xs">{roleLabel}</span></span>
             <button className="rounded-md bg-white/15 px-3 py-1.5 hover:bg-white/25" onClick={() => { logout(); nav("/"); }}>Log out</button>
           </div>
         </div>
       </header>
       <main className="mx-auto max-w-7xl p-4 sm:p-6"><Outlet /></main>
+      <footer className="mx-auto max-w-7xl border-t border-slate-200 px-4 py-4 text-xs text-slate-500 sm:px-6">
+        <Link className="hover:underline" to="/privacy">Privacy policy</Link>
+        <span className="mx-2">|</span>
+        <Link className="hover:underline" to="/terms">Terms and conditions</Link>
+      </footer>
     </div>
   );
 }

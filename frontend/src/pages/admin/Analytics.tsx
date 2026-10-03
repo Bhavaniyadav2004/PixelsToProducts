@@ -66,7 +66,7 @@ export default function Analytics() {
         <ul className="space-y-2 text-sm">
           {a.recurring.map((r) => (
             <li key={r.codes.join()} className="rounded-lg bg-orange-50 p-3">
-              ⚠ <b>{pretty(r.issue_type)}</b> on <Link className="text-indigo-600" to={`/street/${r.street_slug}`}>{r.street_name}</Link>: {r.incidents} incidents over {r.span_days} days ({r.codes.join(", ")}). Root cause not determined.
+              <b>{pretty(r.issue_type)}</b> on <Link className="text-indigo-600" to={`/street/${r.street_slug}`}>{r.street_name}</Link>: {r.incidents} incidents over {r.span_days} days ({r.codes.join(", ")}). Root cause not determined.
             </li>
           ))}
         </ul>

@@ -38,8 +38,8 @@ export default function MediaUploader({ onUploaded, endpoint = "/media/upload", 
   return (
     <div>
       <div className="flex flex-wrap gap-2">
-        <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => camera.current?.click()}>📸 Take Photo</button>
-        <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => input.current?.click()}>📁 {label}</button>
+        <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => camera.current?.click()}>Take photo</button>
+        <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => input.current?.click()}>{label}</button>
       </div>
       <input ref={camera} type="file" accept="image/*" capture="environment" hidden onChange={(e) => send(e.target.files?.[0])} />
       <input ref={input} type="file" accept={accept} hidden onChange={(e) => send(e.target.files?.[0])} />

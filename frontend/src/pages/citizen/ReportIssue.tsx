@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MediaUploader from "../../components/MediaUploader";
+import LocationPicker from "../../components/LocationPicker";
 import { PageTitle } from "../../components/Layout";
 import { SeverityBadge } from "../../components/PriorityBadge";
 import { api, errMsg } from "../../services/api";
@@ -20,6 +21,7 @@ export default function ReportIssue() {
   const [confirmed, setConfirmed] = useState(false);
   const [coords, setCoords] = useState<{ lat: string; lon: string }>({ lat: "", lon: "" });
   const [locMsg, setLocMsg] = useState("");
+  const [accuracy, setAccuracy] = useState<number | null>(null);
   const [street, setStreet] = useState("");
   const [desc, setDesc] = useState("");
   const [error, setError] = useState("");
@@ -27,15 +29,26 @@ export default function ReportIssue() {
   const [done, setDone] = useState<{ incident: Incident; created_new_incident: boolean; report_id: number } | null>(null);
 
   const locate = () => {
-    setLocMsg("Locating...");
-    navigator.geolocation?.getCurrentPosition(
-      (p) => { setCoords({ lat: p.coords.latitude.toFixed(6), lon: p.coords.longitude.toFixed(6) }); setLocMsg("Location captured"); },
-      () => setLocMsg("Could not get location - enter it manually"),
+    if (!navigator.geolocation) {
+      setLocMsg("Geolocation is not supported. Select the location on the map.");
+      return;
+    }
+    setLocMsg("Detecting your location...");
+    navigator.geolocation.getCurrentPosition(
+      (p) => {
+        setCoords({ lat: p.coords.latitude.toFixed(6), lon: p.coords.longitude.toFixed(6) });
+        setAccuracy(p.coords.accuracy);
+        setLocMsg(`Location detected (accuracy about ${Math.round(p.coords.accuracy)} m). Click the map to adjust.`);
+      },
+      () => setLocMsg("Location access was denied or unavailable. Click the map to select the location."),
       { enableHighAccuracy: true, timeout: 10000 },
     );
-    if (!navigator.geolocation) setLocMsg("Geolocation unsupported - enter it manually");
   };
   useEffect(locate, []);
+
+  const latNum = parseFloat(coords.lat);
+  const lonNum = parseFloat(coords.lon);
+  const hasCoords = !isNaN(latNum) && !isNaN(lonNum);
 
   const onUploaded = async (m: MediaItem) => {
     setMedia((prev) => [...prev, m]);
@@ -75,8 +88,7 @@ export default function ReportIssue() {
   if (done)
     return (
       <div className="card mx-auto max-w-lg text-center">
-        <div className="text-4xl">✅</div>
-        <h1 className="mt-2 text-xl font-bold">Report submitted successfully.</h1>
+        <h1 className="text-xl font-semibold">Report submitted</h1>
         <p className="mt-2">Incident: <b>{done.incident.incident_code}</b> - Status: <b>{pretty(done.incident.status)}</b></p>
         <p className="text-sm text-slate-500">
           {done.created_new_incident ? "A new incident was created." : `Your report was added to an existing incident (${done.incident.report_count} reports).`}
@@ -88,7 +100,7 @@ export default function ReportIssue() {
       </div>
     );
 
-  const ready = media.length > 0 && confirmed && coords.lat && coords.lon && !isNaN(parseFloat(coords.lat)) && !isNaN(parseFloat(coords.lon));
+  const ready = media.length > 0 && confirmed && hasCoords;
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
@@ -123,7 +135,7 @@ export default function ReportIssue() {
                 </div>
               )}
               <div className="mt-3 flex gap-2">
-                <button className={`btn ${confirmed ? "btn-green" : "btn-primary"}`} onClick={() => { setConfirmed(true); setCorrecting(false); }}>{confirmed ? "Confirmed ✓" : "Confirm"}</button>
+                <button className={`btn ${confirmed ? "btn-green" : "btn-primary"}`} onClick={() => { setConfirmed(true); setCorrecting(false); }}>{confirmed ? "Confirmed" : "Confirm"}</button>
                 {!correcting && <button className="btn btn-ghost" onClick={() => { setCorrecting(true); setConfirmed(false); }}>Correct</button>}
               </div>
             </>
@@ -137,7 +149,13 @@ export default function ReportIssue() {
           <div><label className="label">Latitude</label><input className="input" value={coords.lat} onChange={(e) => setCoords({ ...coords, lat: e.target.value })} /></div>
           <div><label className="label">Longitude</label><input className="input" value={coords.lon} onChange={(e) => setCoords({ ...coords, lon: e.target.value })} /></div>
         </div>
-        <div className="flex items-center gap-3"><button className="btn btn-ghost" onClick={locate}>📍 Use my location</button><span className="text-xs text-slate-500">{locMsg}</span></div>
+        <div className="flex items-center gap-3"><button className="btn btn-ghost" onClick={locate}>Use my current location</button><span className="text-xs text-slate-500">{locMsg}</span></div>
+        <LocationPicker
+          lat={hasCoords ? latNum : null}
+          lon={hasCoords ? lonNum : null}
+          accuracy={accuracy}
+          onChange={(la, lo) => { setCoords({ lat: la.toFixed(6), lon: lo.toFixed(6) }); setAccuracy(null); setLocMsg("Location set from map."); }}
+        />
         <div><label className="label">Street / landmark (optional)</label><input className="input" value={street} onChange={(e) => setStreet(e.target.value)} placeholder="e.g. MG Road" /></div>
         <div><label className="label">Description (optional)</label><textarea className="input" rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Large pothole near the junction" /></div>
         {error && <p className="text-sm text-rose-600">{error}</p>}

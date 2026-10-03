@@ -23,7 +23,7 @@ export default function IncidentView({ incident: i, children, showPriority = tru
           <StatusBadge status={i.status} />
           <SeverityBadge severity={i.severity} />
           {showPriority && <PriorityBadge level={i.priority_level} score={i.priority_score} />}
-          {i.recurring && <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-bold text-orange-700">⚠ RECURRING ISSUE</span>}
+          {i.recurring && <span className="rounded bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-700">RECURRING ISSUE</span>}
         </div>
         <div className="mt-1 text-slate-700">
           {pretty(i.issue_type)} on{" "}
@@ -68,7 +68,7 @@ export default function IncidentView({ incident: i, children, showPriority = tru
           {showPriority && i.priority_reasons && (
             <section className="card text-sm">
               <h2 className="mb-2 font-bold">Why this priority?</h2>
-              <ul className="space-y-1">{i.priority_reasons.map((r) => <li key={r}>✓ {r}</li>)}</ul>
+              <ul className="space-y-1">{i.priority_reasons.map((r) => <li key={r} className="list-inside list-disc">{r}</li>)}</ul>
               {i.priority_locked && <p className="mt-2 text-xs text-slate-500">Priority level manually set by an admin.</p>}
             </section>
           )}
