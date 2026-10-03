@@ -33,7 +33,9 @@ def run_ai_verification(db: Session, incident: Incident) -> Verification:
         before.thumbnail_url or before.cloudinary_url if before.media_type == "video" else before.cloudinary_url,
         after.cloudinary_url,
     )
-    if not result.improvement_detected:
+    if meta.get("source") in ("unavailable", "demo"):
+        outcome = "REQUIRES_REVIEW"
+    elif not result.improvement_detected:
         outcome = "FAILED"
     elif result.remaining_damage:
         outcome = "FAILED" if result.confidence >= 0.7 else "REQUIRES_REVIEW"
@@ -58,11 +60,15 @@ def run_ai_verification(db: Session, incident: Incident) -> Verification:
 def finalize(db: Session, incident: Incident, v: Verification) -> None:
     """Combine AI + citizen outcomes into the incident status."""
     if v.ai_result == "FAILED":
-        set_status(db, incident, "IN_PROGRESS")
-        v.final_status = "FAILED"
-        add_event(db, incident, "REOPENED", "Repair reopened", "AI verification found the repair incomplete", None, "System")
-        db.add(RepairUpdate(incident_id=incident.id, updated_by=incident.assigned_user_id or 1,
-                            status="IN_PROGRESS", notes="Repair reopened after failed AI verification"))
+        set_status(db, incident, "REQUIRES_REVIEW")
+        v.final_status = "REQUIRES_REVIEW"
+        add_event(db, incident, "REVIEW", "Incomplete repair sent for admin review",
+                  "AI comparison found insufficient improvement or remaining damage", None, "System")
+    elif v.ai_result == "REQUIRES_REVIEW":
+        set_status(db, incident, "REQUIRES_REVIEW")
+        v.final_status = "REQUIRES_REVIEW"
+        add_event(db, incident, "REVIEW", "Sent for admin review",
+                  "Automated comparison was unavailable or inconclusive", None, "System")
     elif v.citizen_result is None:
         set_status(db, incident, "AWAITING_VERIFICATION")
         v.final_status = "PENDING"
@@ -88,8 +94,5 @@ def record_citizen_result(db: Session, incident: Incident, user, confirmed: bool
     add_event(db, incident, "CITIZEN_CONFIRMATION",
               "Citizen confirmed the repair" if confirmed else "Citizen disputes the repair",
               notes, None, user)
-    if v.ai_result == "FAILED":
-        v.final_status = "FAILED"
-    else:
-        finalize(db, incident, v)
+    finalize(db, incident, v)
     return v

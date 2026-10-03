@@ -52,7 +52,9 @@ export default function ReportIssue() {
 
   const onUploaded = async (m: MediaItem) => {
     setMedia((prev) => [...prev, m]);
-    if (analysis) return;
+    if (analysis || confirmed || correcting || analyzing) return;
+    setConfirmed(false);
+    setError("");
     setAnalyzing(true);
     try {
       const { data } = await api.post(`/ai/analyze/${m.id}`);
@@ -62,8 +64,8 @@ export default function ReportIssue() {
     } catch (e) {
       setError(errMsg(e));
       setCorrecting(true);
-      setIssueType("POTHOLE");
-      setSeverity("MEDIUM");
+      setIssueType("");
+      setSeverity("");
     } finally {
       setAnalyzing(false);
     }
@@ -100,7 +102,7 @@ export default function ReportIssue() {
       </div>
     );
 
-  const ready = media.length > 0 && confirmed && hasCoords;
+  const ready = media.length > 0 && confirmed && hasCoords && !analyzing && TYPES.includes(issueType) && SEVS.includes(severity);
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
@@ -119,23 +121,24 @@ export default function ReportIssue() {
 
       {(analyzing || analysis || correcting) && (
         <section className="card">
-          <h2 className="mb-3 font-bold">2. What we detected</h2>
+          <h2 className="mb-3 font-bold">2. Issue classification</h2>
           {analyzing ? <p className="text-sm text-slate-500">Analyzing...</p> : (
             <>
               {!correcting ? (
                 <div>
                   <div className="text-lg font-semibold">{pretty(issueType)} <SeverityBadge severity={severity} /></div>
-                  {analysis && <p className="text-sm text-slate-500">{analysis.description} ({Math.round(analysis.confidence * 100)}% confidence)</p>}
+                  {analysis && <p className="text-sm text-slate-500">{analysis.description} ({Math.round(analysis.confidence * 100)}% model-reported confidence)</p>}
+                  {analysis?.source === "cloudinary_ai_vision" && <p className="mt-1 text-xs text-slate-500">Cloudinary AI Vision suggestion</p>}
                   {analysis?.source === "demo" && <p className="mt-1 text-xs text-amber-600">AI is running in demo mode - please check this carefully.</p>}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className="label">Issue type</label><select className="input" value={issueType} onChange={(e) => setIssueType(e.target.value)}>{TYPES.map((t) => <option key={t} value={t}>{pretty(t)}</option>)}</select></div>
-                  <div><label className="label">Severity</label><select className="input" value={severity} onChange={(e) => setSeverity(e.target.value)}>{SEVS.map((t) => <option key={t}>{t}</option>)}</select></div>
+                  <div><label className="label" htmlFor="issue-type">Issue type</label><select id="issue-type" className="input" value={issueType} onChange={(e) => setIssueType(e.target.value)}><option value="" disabled>Select issue type</option>{TYPES.map((t) => <option key={t} value={t}>{pretty(t)}</option>)}</select></div>
+                  <div><label className="label" htmlFor="severity">Severity</label><select id="severity" className="input" value={severity} onChange={(e) => setSeverity(e.target.value)}><option value="" disabled>Select severity</option>{SEVS.map((t) => <option key={t}>{t}</option>)}</select></div>
                 </div>
               )}
               <div className="mt-3 flex gap-2">
-                <button className={`btn ${confirmed ? "btn-green" : "btn-primary"}`} onClick={() => { setConfirmed(true); setCorrecting(false); }}>{confirmed ? "Confirmed" : "Confirm"}</button>
+                <button className={`btn ${confirmed ? "btn-green" : "btn-primary"}`} disabled={!TYPES.includes(issueType) || !SEVS.includes(severity)} onClick={() => { setConfirmed(true); setCorrecting(false); }}>{confirmed ? "Confirmed" : "Confirm"}</button>
                 {!correcting && <button className="btn btn-ghost" onClick={() => { setCorrecting(true); setConfirmed(false); }}>Correct</button>}
               </div>
             </>

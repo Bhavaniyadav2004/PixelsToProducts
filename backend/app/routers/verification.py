@@ -19,7 +19,10 @@ def analyze(media_id: int, db: Session = Depends(get_db), user: User = Depends(g
     url = m.cloudinary_url if m.media_type == "image" else m.thumbnail_url
     if not url:
         raise HTTPException(400, "No analyzable image for this media")
-    result, meta = ai_service.analyze_image(url, seed=m.cloudinary_public_id)
+    try:
+        result, meta = ai_service.analyze_image(url, seed=m.cloudinary_public_id)
+    except ai_service.AnalysisUnavailable as exc:
+        raise HTTPException(503, str(exc)) from None
     row = AIAnalysis(media_id=m.id, issue_type=result.issue_type, severity=result.severity,
                      confidence=result.confidence, description=result.description, raw_response=str(meta))
     db.add(row)

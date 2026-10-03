@@ -38,17 +38,23 @@ The main demo incident is **SP-1001** (MG Road pothole): report, damage progress
 
 - `DATABASE_URL` - PostgreSQL URL for production; defaults to local SQLite for development.
 - `CLOUDINARY_*` - if unset, media is stored in `backend/uploads` so the app still works offline.
-- `AI_API_KEY`, `AI_MODEL`, `AI_BASE_URL` - any OpenAI-compatible vision API. If unset, a clearly labelled demo estimate is used.
+- Report classification uses Cloudinary AI Vision General mode. Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`, activate the AI Vision add-on in the Cloudinary console, and check its token quota/pricing. These credentials stay on the backend.
+- Upload an image (or a video with a Cloudinary image thumbnail), then request analysis. The backend submits its public HTTPS URL to AI Vision and validates the response before returning a suggestion for citizen confirmation. Model-reported confidence is not a calibrated probability.
+- Failed analysis returns a clear error and permits manual classification; there is no simulated classification or fallback to another AI provider. Local-only uploads cannot be remotely analyzed.
+- `AI_API_KEY`, `AI_MODEL`, `AI_BASE_URL` configure the separate OpenAI-compatible provider used only for before/after repair comparison. Missing or failed comparison requires human review and cannot automatically verify a repair. This workflow is not Cloudinary-only.
 - `GROUPING_RADIUS_METERS` (default 50) - radius for grouping reports into one incident.
 
 Never commit `.env`.
+
+Run focused backend tests from `backend` with `python -m unittest discover -s tests -v`.
+For a live check, upload a permitted road image, confirm that analysis displays "Cloudinary AI Vision suggestion", then confirm or correct it before submitting. Add-on access and quota are account-side prerequisites.
 
 ## Design notes
 
 - PostgreSQL holds structured data; Cloudinary holds media (only references are stored).
 - Incident grouping: same issue type, unresolved, within the radius.
 - Priority is rule-based and explained: severity 40, report count 20, damage progression 15, age 15, traffic 10.
-- AI is decision support. Outcome logic: AI FAILED reopens the repair; citizen "No" or an inconclusive AI result sends the incident to admin review; AI VERIFIED plus citizen "Yes" resolves it.
+- AI is decision support. Municipal staff upload repair evidence and click Mark Completed to compare before/after photos. Failed, inconclusive or unavailable analysis, or citizen "No", sends the incident to admin review. Admin can reopen work or approve resolution; AI VERIFIED plus citizen "Yes" resolves it.
 - Street condition (`/street/{id}`) is a prototype indicator derived from open incident severity, not a road-quality score.
 
 ## Layout
