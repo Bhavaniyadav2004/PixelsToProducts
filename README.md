@@ -11,7 +11,8 @@ No registration is required to explore the application.
 1. Click **Sign in** to open the login page.
 2. Select **Citizen**, **Municipal**, or **Admin** to automatically fill the predefined credentials.
 3. Click **Sign in** to access that role’s dashboard.
-4. If needed create a new account and test it.
+
+**Create an account** is optional and only needed to test new citizen registration. For municipal and admin access, use the predefined accounts above.
 
 | Resource | Link |
 | --- | --- |
