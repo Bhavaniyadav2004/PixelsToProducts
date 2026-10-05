@@ -12,6 +12,16 @@
 
 No local setup or Vercel account is required.
 
+### Quick links
+
+| Find what you need | Jump to section |
+| --- | --- |
+| Access and demo | [Live demo and video](#live-demo) · [Login credentials](#demo-login) · [Hosting notes](#hosted-demo-notes) · [Demo walkthrough](#try-the-deployed-application) |
+| Try it yourself | [Preparation](#prepare-for-the-demo) · [Quick tour](#quick-tour-without-changing-records) · [Report-to-review test](#test-one-issue-from-report-to-review) · [Detailed workflow](#reproduce-the-complete-workflow) |
+| Project and value | [Overview](#project-overview) · [The problem](#the-problem-it-addresses) · [Three roles](#one-workflow-three-roles) · [Why it stands out](#why-streetpulse-stands-out) · [Effectiveness and impact](#effectiveness-and-intended-impact) |
+| Evaluation evidence | [What to evaluate](#what-to-evaluate) · [Cloudinary integration](#cloudinary-integration-evidence) · [Validation](#validation) · [Scope and limitations](#scope-and-limitations) |
+| Technical reference | [Architecture](#technical-approach) · [Local setup](#run-locally) · [Configuration](#configuration-env) · [Deployment and submitted source](#deployment-and-submitted-source) · [Design notes](#design-notes) · [Repository layout](#layout) |
+
 ### Demo login
 
 1. Open the login page.
