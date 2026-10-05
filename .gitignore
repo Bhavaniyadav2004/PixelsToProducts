@@ -6,4 +6,3 @@ node_modules/
 dist/
 backend/streetpulse.db
 backend/uploads/
-.vercel/
