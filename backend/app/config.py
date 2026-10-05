@@ -12,6 +12,8 @@ def _db_url() -> str:
     url = os.getenv("DATABASE_URL") or f"sqlite:///{(BASE_DIR / 'streetpulse.db').as_posix()}"
     if url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql://", 1)
+    if url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
     return url
 
 
@@ -34,8 +36,9 @@ class Settings:
 
     CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")]
     PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "http://localhost:8000").rstrip("/")
-    UPLOAD_DIR = BASE_DIR / "uploads"
-    AUTO_SEED = os.getenv("AUTO_SEED", "true").lower() == "true"
+    UPLOAD_DIR = Path("/tmp/streetpulse-uploads") if os.getenv("VERCEL") else BASE_DIR / "uploads"
+    AUTO_INIT_DB = os.getenv("AUTO_INIT_DB", "false" if os.getenv("VERCEL") else "true").lower() == "true"
+    AUTO_SEED = os.getenv("AUTO_SEED", "false" if os.getenv("VERCEL") else "true").lower() == "true"
 
     @property
     def cloudinary_enabled(self) -> bool:

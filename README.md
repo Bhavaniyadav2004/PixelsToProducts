@@ -2,6 +2,28 @@
 
 > StreetPulse closes the gap between reporting civic damage and verifying its repair.
 
+## Live demo
+
+**[Open StreetPulse](https://streetpulse-alpha.vercel.app)** | [Demo login](https://streetpulse-alpha.vercel.app/login)
+
+[Watch the project explanation and demo on YouTube](https://youtu.be/pGMUPEqazt8?si=0twcrinIhyH2Dn6D)
+
+No local setup or Vercel account is required.
+
+### Demo login
+
+On the login page, click **Citizen**, **Municipal** or **Admin** to auto-fill that role's credentials, then click **Sign in**. You can also enter the credentials below manually. To use a new citizen account, click **New here? Create an account**. Registration creates citizen accounts only; municipal and admin access uses the existing accounts below and cannot be created through public registration.
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Citizen | citizen@streetpulse.test | citizen123 |
+| Municipal | ravi@streetpulse.test | municipal123 |
+| Admin | admin@streetpulse.test | admin123 |
+
+This is a public evaluation sandbox: use fictional data and permitted images only, never personal or sensitive information.
+
+Frontend and FastAPI are deployed on Vercel, with persistent Neon PostgreSQL and Cloudinary media storage. [API health](https://streetpulse-api.vercel.app/api/health). Public access, all three role logins and citizen dashboard loading were verified on October 5, 2026; a fresh live AI repair workflow was not re-tested during deployment. For this deployment, keep uploads below 4 MB because Vercel's request body limit is lower than the application's local upload limit.
+
 StreetPulse is a Bengaluru-focused civic maintenance prototype for citizens, municipal teams and administrators. It combines location-based report grouping, accountable assignments, Cloudinary-hosted evidence and Cloudinary AI Vision comparison, while preserving administrator review and citizen confirmation.
 
 The problem is not just collecting complaints: residents need to know who owns the work, what changed and whether the repair is supported by evidence. StreetPulse keeps those steps in one shared incident timeline. Its intended impact is less repeated reporting, clearer responsibility and more visible repair outcomes; these benefits have not yet been measured in a municipal deployment.
@@ -52,12 +74,6 @@ npm run dev
 
 On first start with an empty database, demo data is seeded automatically (10 incidents, 30 reports, 40 media, 5 repair workflows).
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Citizen | citizen@streetpulse.test | citizen123 |
-| Municipal | ravi@streetpulse.test | municipal123 |
-| Admin | admin@streetpulse.test | admin123 |
-
 Seeded incidents illustrate timelines, assignments, recurrence and verification states. They are fictional demonstration records, not proof that a real municipality performed or verified those repairs. Use a fresh report to exercise live AI calls.
 
 ## Reproduce the complete workflow
@@ -92,6 +108,8 @@ The regression suite covers Cloudinary request construction, response validation
 ## Configuration (`.env`)
 
 - `DATABASE_URL` - PostgreSQL URL for production; defaults to local SQLite for development.
+- Vercel uses separate projects rooted at `frontend` and `backend`. Set frontend `VITE_API_URL` to the API origin and backend `CORS_ORIGINS` to the frontend origin. Keep database, Cloudinary and JWT secrets in the backend project's environment only.
+- On Vercel, `AUTO_INIT_DB` and `AUTO_SEED` default to false to avoid concurrent cold-start schema creation and seeding. Initialize the database once before serving traffic; local development retains automatic initialization. Temporary uploads use `/tmp`; Cloudinary is required for persistent hosted media. GitHub auto-deploy is not connected; deploy each project using `vercel deploy --prod` from its directory after configuration changes.
 - `CLOUDINARY_*` - if unset, media is stored in `backend/uploads` for local development. AI services and online map tiles still require network access.
 - Report classification uses Cloudinary AI Vision General mode. Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`, activate the AI Vision add-on in the Cloudinary console, and check its token quota/pricing. These credentials stay on the backend.
 - Upload an image (or a video with a Cloudinary image thumbnail), then request analysis. The backend submits its public HTTPS URL to AI Vision and validates the response before returning a suggestion for citizen confirmation. Model-reported confidence is not a calibrated probability.
@@ -118,7 +136,7 @@ For a live check, upload a permitted road image, confirm that analysis displays 
 - Seeded photos and before/after pairs illustrate the interface; they are not independently verified repair evidence. Use genuine, same-location photos for a meaningful live comparison and label staged demonstrations clearly.
 - AI confidence is self-reported, not calibrated accuracy or proof of repair. Camera angle, image quality and scene differences can affect results. Video verification uses a thumbnail, not full-video analysis.
 - Cloudinary availability, fetched-image transformation permissions and AI Vision add-on quota affect live comparisons. Old saved verification records do not automatically rerun after configuration changes.
-- The published accounts and development defaults are for local evaluation only. Replace demo credentials and development secrets, and review privacy, access controls and deployment security before public production use. Never commit `.env` or real credentials.
+- The published accounts are shared evaluation accounts for the local and hosted demo, not private production accounts. Replace demo credentials and development secrets, and review privacy, access controls and deployment security before real production use. Never commit `.env` or real credentials.
 
 ## Layout
 

@@ -13,7 +13,8 @@ from .routers import auth, dashboards, incidents, media, repairs, reports, verif
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Base.metadata.create_all(engine)
+    if settings.AUTO_INIT_DB:
+        Base.metadata.create_all(engine)
     settings.UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
     if settings.AUTO_SEED:
         with SessionLocal() as db:
