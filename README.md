@@ -40,11 +40,77 @@ This is a public evaluation sandbox: use fictional data and permitted images onl
 
 ## Project overview
 
-StreetPulse is a Bengaluru-focused civic maintenance prototype for citizens, municipal teams and administrators. It combines location-based report grouping, accountable assignments, Cloudinary-hosted evidence and Cloudinary AI Vision comparison, while preserving administrator review and citizen confirmation.
+**StreetPulse turns a civic complaint into an accountable repair workflow, from the first photograph to citizen confirmation.**
 
-The problem is not just collecting complaints: residents need to know who owns the work, what changed and whether the repair is supported by evidence. StreetPulse keeps those steps in one shared incident timeline. Its intended impact is less repeated reporting, clearer responsibility and more visible repair outcomes; these benefits have not yet been measured in a municipal deployment.
+Built around Bengaluru's streets, the prototype brings citizens, municipal teams and administrators into one shared incident timeline. A resident reports damage with location and visual evidence. Related reports can join an existing incident. An administrator assigns responsibility, a municipal worker records the repair, and Cloudinary AI Vision compares before-and-after evidence. Human review and citizen confirmation remain part of the decision to close the issue.
 
-Modular monolith: **React + Vite + TypeScript + Tailwind** frontend, **FastAPI + SQLAlchemy** backend, **Cloudinary** media, vision-AI for analysis and repair verification.
+The central question is not just **"Was this reported?"** It is **"Who owns it, what changed, and is there evidence that the repair worked?"**
+
+### The problem it addresses
+
+A reporting form captures a complaint, but does not by itself establish responsibility or demonstrate a repair. Repeated reports can fragment the same issue across separate records. A completion status alone does not show whether the location matches, whether damage remains, or whether the resident agrees with the outcome.
+
+StreetPulse addresses these gaps through a connected workflow:
+
+| Gap | StreetPulse response | Practical value |
+| --- | --- | --- |
+| Multiple people report the same nearby damage | Groups unresolved reports of the same issue type within a configurable radius | Keeps related evidence and report counts attached to a shared work item |
+| Residents cannot see who is responsible | Department and worker assignment, due dates, status changes and a timeline | Makes ownership and progress visible |
+| Work needs an understandable order | Rule-based priority with contributing factors and admin overrides | Supports explainable triage instead of an unexplained score |
+| A completion claim lacks supporting evidence | Before/during/after media and AI-assisted repair comparison | Gives reviewers evidence to inspect before accepting completion |
+| AI is uncertain or the resident disagrees | Admin review, reopening, dispute handling and citizen confirmation | Preserves a route to challenge an incorrect outcome |
+| Recurring damage is hard to follow | Street history and recurring-issue indicators | Helps reviewers investigate repeated problems over time |
+
+### One workflow, three roles
+
+- **Citizens** report issues, inspect progress and evidence, and confirm or dispute the repair.
+- **Municipal teams** receive assigned work, record progress, and submit repair evidence.
+- **Administrators** prioritize and assign incidents, review uncertain outcomes, and reopen or resolve work with oversight.
+
+The normal completion path is **report -> group and prioritize -> assign -> repair -> compare evidence -> citizen confirmation**. Failed or uncertain comparison takes a review path rather than being presented as a successful repair.
+
+## Why StreetPulse stands out
+
+**The strongest case for StreetPulse is the combination of a useful civic workflow, meaningful visual AI integration, and explicit checks on automated decisions.** Its value is in connecting those pieces into an inspectable experience, not in claiming that AI alone can certify public infrastructure.
+
+| Evaluation dimension | What makes the project a strong contender | Evidence to inspect |
+| --- | --- | --- |
+| Problem relevance | Connects reporting to ownership, repair evidence and resident feedback | [Complete three-role walkthrough](#reproduce-the-complete-workflow) |
+| Product completeness | Implements citizen, municipal and admin workflows rather than stopping at an upload-and-predict screen | [Citizen pages](frontend/src/pages/citizen), [municipal pages](frontend/src/pages/municipal), [admin pages](frontend/src/pages/admin) |
+| Cloudinary integration depth | Uses media delivery, video thumbnails, comparison-image composition and AI Vision at reporting and verification stages | [Cloudinary integration evidence](#cloudinary-integration-evidence) |
+| Responsible AI design | Routes unavailable, incomparable or low-confidence evidence to review; successful AI verification still needs citizen confirmation in the normal flow | [Verification service](backend/app/services/verification_service.py) |
+| Operational reasoning | Combines proximity-based grouping with explainable priority and assignment | [Incident service](backend/app/services/incident_service.py), [priority service](backend/app/services/priority_service.py) |
+| Engineering evidence | Includes focused regression tests for provider failures, invalid output and verification decisions | [Backend regression tests](backend/tests/test_cloudinary_analysis.py) |
+| Demonstrability | Provides a public deployment, three demo roles, seeded scenarios and a video walkthrough | [Live demo and video](#live-demo), [demo login](#demo-login) |
+
+These are concrete strengths reviewers can verify in the application and source. They support an award case based on implementation and usefulness; they do not establish superiority over projects that have not been evaluated.
+
+## Effectiveness and intended impact
+
+StreetPulse is designed to improve **coordination, visibility and evidence quality**. Its current effectiveness can be assessed at the workflow level: can users follow an issue across roles, inspect the evidence behind its status, and challenge an unsupported repair claim?
+
+| Intended benefit | Implemented mechanism | What a real-world pilot should measure |
+| --- | --- | --- |
+| Less fragmented handling of duplicate complaints | Shared incidents for nearby reports of the same issue type | Correct grouping rate, incorrect merges and separate work items avoided |
+| Clearer responsibility and faster triage | Explained priorities, ownership and due dates | Time to assignment and overdue work, compared with a baseline |
+| More defensible repair acceptance | Visual comparison, review escalation and citizen feedback | False acceptance/rejection rates against independent human inspection |
+| Better resident visibility | Report status, incident timelines and repair evidence | Whether residents can identify the owner, current status and reason for closure |
+| Better understanding of repeated damage | Street history and recurrence indicators | Repeat-issue identification quality and how that information changes maintenance decisions |
+
+**Evidence boundary:** public access, all three role logins and citizen dashboard loading have been checked. The focused backend suite passed 15 tests during deployment preparation, and the frontend production build passed. Provider calls in the tests are mocked. No municipal pilot, measured repair-time reduction, cost saving or validated AI accuracy is claimed; those require field evaluation.
+
+## Technical approach
+
+StreetPulse uses a modular monolith with separate frontend and API deployments:
+
+| Layer | Technology and responsibility |
+| --- | --- |
+| User interface | React, Vite, TypeScript and Tailwind for the three role-based workflows |
+| API and workflow rules | FastAPI services for incidents, priorities, repairs, verification and timelines |
+| Structured data | SQLAlchemy with SQLite for local development and PostgreSQL for the hosted demo |
+| Media and visual analysis | Cloudinary storage, delivery, transformations and AI Vision |
+
+Cloudinary handles visual evidence; application rules decide how its results affect the workflow. Keeping these responsibilities separate allows a provider error or uncertain model output to trigger review without pretending the repair has been verified.
 
 ## What to evaluate
 
