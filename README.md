@@ -4,15 +4,25 @@
 
 ## Live demo
 
-**[Open StreetPulse](https://streetpulse-alpha.vercel.app)** | [Demo login](https://streetpulse-alpha.vercel.app/login)
-
-[Watch the project explanation and demo on YouTube](https://youtu.be/pGMUPEqazt8?si=0twcrinIhyH2Dn6D)
+| Resource | Link |
+| --- | --- |
+| Live application | [Open StreetPulse](https://streetpulse-alpha.vercel.app) |
+| Demo access | [Sign in](https://streetpulse-alpha.vercel.app/login) |
+| Video walkthrough | [Watch the project explanation and demo](https://youtu.be/pGMUPEqazt8?si=0twcrinIhyH2Dn6D) |
 
 No local setup or Vercel account is required.
 
 ### Demo login
 
-On the login page, click **Citizen**, **Municipal** or **Admin** to auto-fill that role's credentials, then click **Sign in**. You can also enter the credentials below manually. To use a new citizen account, click **New here? Create an account**. Registration creates citizen accounts only; municipal and admin access uses the existing accounts below and cannot be created through public registration.
+1. Open the login page.
+2. Click **Citizen**, **Municipal** or **Admin** to auto-fill that role's credentials.
+3. Click **Sign in**.
+
+You can also enter the credentials below manually.
+
+**New citizen account:** click **New here? Create an account**. Public registration creates citizen accounts only.
+
+**Municipal and admin access:** use the existing accounts below. These roles cannot be created through public registration.
 
 | Role | Email | Password |
 | --- | --- | --- |
@@ -22,7 +32,13 @@ On the login page, click **Citizen**, **Municipal** or **Admin** to auto-fill th
 
 This is a public evaluation sandbox: use fictional data and permitted images only, never personal or sensitive information.
 
-Frontend and FastAPI are deployed on Vercel, with persistent Neon PostgreSQL and Cloudinary media storage. [API health](https://streetpulse-api.vercel.app/api/health). Public access, all three role logins and citizen dashboard loading were verified on October 5, 2026; a fresh live AI repair workflow was not re-tested during deployment. For this deployment, keep uploads below 4 MB because Vercel's request body limit is lower than the application's local upload limit.
+### Hosted demo notes
+
+- **Hosting:** Vercel frontend and FastAPI, persistent Neon PostgreSQL, and Cloudinary media storage. [Check API health](https://streetpulse-api.vercel.app/api/health).
+- **Verified on October 5, 2026:** public access, all three role logins, and citizen dashboard loading. A fresh live AI repair workflow was not re-tested during deployment.
+- **Uploads:** keep files below 4 MB because Vercel's request body limit is lower than the application's local upload limit.
+
+## Project overview
 
 StreetPulse is a Bengaluru-focused civic maintenance prototype for citizens, municipal teams and administrators. It combines location-based report grouping, accountable assignments, Cloudinary-hosted evidence and Cloudinary AI Vision comparison, while preserving administrator review and citizen confirmation.
 
@@ -54,7 +70,9 @@ Both classification and repair comparison use Cloudinary AI Vision. No separate 
 
 ## Run locally
 
-Backend (http://localhost:8000):
+### Backend
+
+Local API: http://localhost:8000
 
 ```powershell
 cd backend
@@ -64,7 +82,9 @@ copy ..\.env.example .env      # optional; all values have dev defaults
 .\.venv\Scripts\python -m uvicorn app.main:app --reload
 ```
 
-Frontend (http://localhost:5173):
+### Frontend
+
+Local application: http://localhost:5173
 
 ```powershell
 cd frontend
@@ -72,7 +92,9 @@ npm install
 npm run dev
 ```
 
-On first start with an empty database, demo data is seeded automatically (10 incidents, 30 reports, 40 media, 5 repair workflows).
+### Demo data
+
+On first start with an empty database, demo data is seeded automatically (10 incidents, 30 reports, 40 media, 5 repair workflows). Use the accounts listed under [Demo login](#demo-login).
 
 Seeded incidents illustrate timelines, assignments, recurrence and verification states. They are fictional demonstration records, not proof that a real municipality performed or verified those repairs. Use a fresh report to exercise live AI calls.
 
@@ -108,8 +130,6 @@ The regression suite covers Cloudinary request construction, response validation
 ## Configuration (`.env`)
 
 - `DATABASE_URL` - PostgreSQL URL for production; defaults to local SQLite for development.
-- Vercel uses separate projects rooted at `frontend` and `backend`. Set frontend `VITE_API_URL` to the API origin and backend `CORS_ORIGINS` to the frontend origin. Keep database, Cloudinary and JWT secrets in the backend project's environment only.
-- On Vercel, `AUTO_INIT_DB` and `AUTO_SEED` default to false to avoid concurrent cold-start schema creation and seeding. Initialize the database once before serving traffic; local development retains automatic initialization. Temporary uploads use `/tmp`; Cloudinary is required for persistent hosted media. GitHub auto-deploy is not connected; deploy each project using `vercel deploy --prod` from its directory after configuration changes.
 - `CLOUDINARY_*` - if unset, media is stored in `backend/uploads` for local development. AI services and online map tiles still require network access.
 - Report classification uses Cloudinary AI Vision General mode. Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`, activate the AI Vision add-on in the Cloudinary console, and check its token quota/pricing. These credentials stay on the backend.
 - Upload an image (or a video with a Cloudinary image thumbnail), then request analysis. The backend submits its public HTTPS URL to AI Vision and validates the response before returning a suggestion for citizen confirmation. Model-reported confidence is not a calibrated probability.
@@ -119,8 +139,13 @@ The regression suite covers Cloudinary request construction, response validation
 
 Never commit `.env`.
 
-Run focused backend tests from `backend` with `python -m unittest discover -s tests -v`.
 For a live check, upload a permitted road image, confirm that analysis displays "Cloudinary AI Vision suggestion", then confirm or correct it before submitting. Add-on access and quota are account-side prerequisites.
+
+### Deployment and submitted source
+
+The current repository preserves the submitted source from `a0772d4`; only this README differs. The running Vercel deployment includes hosting adaptations for PostgreSQL driver selection, temporary uploads and one-time database initialization. Those adaptations were reverted from the repository, not from the already-running deployment.
+
+The hosted frontend and backend are separate Vercel projects. Frontend `VITE_API_URL` points to the API origin, and backend `CORS_ORIGINS` permits the frontend origin. Database, Cloudinary and JWT secrets stay in the backend environment. GitHub auto-deploy is not connected; deploying the restored source directly requires reapplying the hosting adaptations.
 
 ## Design notes
 
