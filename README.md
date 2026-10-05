@@ -38,6 +38,37 @@ This is a public evaluation sandbox: use fictional data and permitted images onl
 - **Verified on October 5, 2026:** public access, all three role logins, and citizen dashboard loading. A fresh live AI repair workflow was not re-tested during deployment.
 - **Uploads:** keep files below 4 MB because Vercel's request body limit is lower than the application's local upload limit.
 
+## Try the deployed application
+
+### Prepare for the demo
+
+Open [StreetPulse login](https://streetpulse-alpha.vercel.app/login), select a demo role and click **Sign in**. No installation is needed. Switch roles using **Sign out**, then return to the login page. For simultaneous sessions, use separate browser profiles or different browsers; ordinary tabs share the same login.
+
+For a new report, prepare a permitted road-damage image below 4 MB. To test repair comparison, also prepare a genuine after-repair photo of the same location from a similar angle. Use fictional descriptions and avoid personal information. Demo accounts and records are shared, so other reviewers may change their state.
+
+### Quick tour without changing records
+
+1. **Citizen:** open **My reports**, select a report, and inspect its status, photos and timeline. Explore **Nearby issues** to see the map-based view.
+2. **Municipal:** sign in with the municipal demo account and open an assigned work item to inspect its location, evidence and progress.
+3. **Admin:** sign in with the admin demo account and inspect the incident list, assignments, verification queue and analytics.
+
+This tour uses seeded examples. It demonstrates the interface, not a fresh AI analysis or an independently verified repair.
+
+### Test one issue from report to review
+
+| Step | Role and action | What to check |
+| --- | --- | --- |
+| 1. Report damage | **Citizen:** choose **Report an issue**, select or search for a location (or allow browser location), and upload the damage image. Review the AI suggestion, confirm or correct the details, and submit. If analysis is unavailable, use manual classification. | A submission confirmation appears. Open **View Timeline** and note the incident code. The report may join an existing nearby incident instead of creating a new one. |
+| 2. Assign responsibility | **Admin:** find that incident code in the incident list. Open it and assign a department, the municipal demo user **Ravi Gowda**, and a due date. | The incident shows its owner and assignment in the timeline. Assigning another worker will not put it in Ravi's work queue. |
+| 3. Record the work | **Municipal:** open the assigned incident, click **Start Work**, add a progress note, and upload repair evidence with the appropriate Before/During/After stage. | The status moves to In Progress and the evidence is attached to the incident. **Accept** alone does not start work. |
+| 4. Request verification | **Municipal:** with after-repair evidence attached, click **Mark Completed** and wait for the comparison result. | Inspect the before/after evidence and result. Clear, comparable improvement can proceed to citizen confirmation; missing, uncertain or failed evidence requires admin review. |
+| 5. Confirm or challenge | **Citizen:** return to the account that submitted the report, open **My reports**, and select the same issue. When the repair confirmation prompt is available, choose **YES - Looks Fixed** or **NO - Still Damaged** based on the evidence. | In the normal successful AI path, agreement resolves the incident. Disagreement sends it to review. The prompt is not available for every status. |
+| 6. Inspect the review path | **Admin:** if the issue requires review, open it through the verification queue, inspect the evidence and reason, then reopen the work or use the available manual resolution action as appropriate. | The timeline retains the decision. A manual admin resolution is not an AI verification success. |
+
+**If you do not have a valid before/after pair:** test reporting, assignment and progress, then inspect the review outcome rather than expecting an automatic successful verification. Cloudinary availability, quota and image comparability affect results. Refresh the incident after switching roles to see its latest state.
+
+For a more detailed test, including negative and positive evidence cases, see [Reproduce the complete workflow](#reproduce-the-complete-workflow).
+
 ## Project overview
 
 **StreetPulse turns a civic complaint into an accountable repair workflow, from the first photograph to citizen confirmation.**
